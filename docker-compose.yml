@@ -1,0 +1,120 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neonoble-ramp-app
+    env_file:
+      - .env.example
+    environment:
+      DATABASE_URL: postgresql://neonoble:neonoble123@postgres:5432/neonoble_ramp
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: neonoble-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: neonoble
+      POSTGRES_PASSWORD: neonoble123
+      POSTGRES_DB: neonoble_ramp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neonoble -d neonoble_ramp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: neonoble-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: neonoble-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      app:
+        condition: service_healthy
+
+  reconciliation-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neonoble-reconciliation-worker
+    command: ["node", "workers/reconciliationWorker.js"]
+    env_file:
+      - .env.example
+    environment:
+      DATABASE_URL: postgresql://neonoble:neonoble123@postgres:5432/neonoble_ramp
+      REDIS_URL: redis://redis:6379
+      RECONCILIATION_BASE_URL: http://app:3000
+    depends_on:
+      app:
+        condition: service_healthy
+
+  ws-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neonoble-ws-gateway
+    command: ["node", "gateways/ws-gateway/server.js"]
+    env_file:
+      - .env.example
+    environment:
+      REDIS_URL: redis://redis:6379
+      WS_GATEWAY_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    container_name: neonoble-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: neonoble
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:3.3.0
+    container_name: neonoble-loki
+    ports:
+      - "3100:3100"
+
+volumes:
+  postgres_data:
+  redis_data:
+  grafana_data:

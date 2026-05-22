@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MetaSwap Wallet</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 32px; color: #172033; background: #f7f8fb; }
+      main { max-width: 920px; margin: 0 auto; }
+      button { padding: 10px 14px; border: 1px solid #172033; background: #172033; color: white; cursor: pointer; }
+      pre { background: white; border: 1px solid #d9deea; padding: 16px; overflow: auto; }
+      input { padding: 10px; min-width: 320px; }
+      .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>MetaSwap Wallet</h1>
+      <div class="row">
+        <input id="userId" value="user-eu-1" aria-label="User id">
+        <button id="connect">Connect EVM Wallet</button>
+        <button id="portfolio">Refresh Portfolio</button>
+      </div>
+      <pre id="output"></pre>
+    </main>
+    <script>
+      const output = document.getElementById("output");
+      let session;
+      const chainMap = { "0x1": "ethereum", "0x38": "bnb", "0x89": "polygon", "0x2105": "base" };
+      const show = (value) => { output.textContent = JSON.stringify(value, null, 2); };
+      document.getElementById("connect").onclick = async () => {
+        if (!window.ethereum) throw new Error("EIP-1193 wallet provider not found");
+        const [address] = await window.ethereum.request({ method: "eth_requestAccounts" });
+        const chainId = await window.ethereum.request({ method: "eth_chainId" });
+        const chain = chainMap[chainId];
+        if (!chain) throw new Error(`Unsupported chain ${chainId}`);
+        const userId = document.getElementById("userId").value;
+        const challenge = await fetch("/wallets/challenge", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ userId, address, chain, walletType: "eip1193" })
+        }).then((res) => res.json());
+        const signature = await window.ethereum.request({ method: "personal_sign", params: [challenge.message, address] });
+        session = await fetch("/wallets/verify", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ challengeId: challenge.id, signature })
+        }).then((res) => res.json());
+        show(session);
+      };
+      document.getElementById("portfolio").onclick = async () => {
+        const userId = document.getElementById("userId").value;
+        const portfolio = await fetch(`/wallets/portfolio/${userId}`).then((res) => res.json());
+        show({ session, portfolio });
+      };
+    </script>
+  </body>
+</html>

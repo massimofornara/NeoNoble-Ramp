@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "MetaSwapV3 Developer Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8088" },
+    { "key": "apiKey", "value": "" },
+    { "key": "adminApiKey", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+    },
+    {
+      "name": "Developer Plans",
+      "request": { "method": "GET", "url": "{{baseUrl}}/developer/plans" }
+    },
+    {
+      "name": "Self-Service Onboard",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/developer/onboard",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"dev@company.com\",\n  \"company\": \"Company\",\n  \"name\": \"Developer\",\n  \"useCase\": \"premium_rpc\",\n  \"expectedMonthlyUnits\": 1000000,\n  \"consent\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Premium RPC",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{apiKey}}" }
+        ],
+        "url": "{{baseUrl}}/rpc/proxy",
+        "body": { "mode": "raw", "raw": "{\n  \"chain\": \"ethereum\",\n  \"method\": \"eth_blockNumber\",\n  \"params\": []\n}" }
+      }
+    },
+    {
+      "name": "Developer Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "x-api-key", "value": "{{apiKey}}" }],
+        "url": "{{baseUrl}}/developer/me"
+      }
+    },
+    {
+      "name": "Enterprise Packages",
+      "request": { "method": "GET", "url": "{{baseUrl}}/enterprise/packages" }
+    },
+    {
+      "name": "Enterprise Lead",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/enterprise/leads",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"buyer@company.com\",\n  \"company\": \"Company\",\n  \"name\": \"Buyer\",\n  \"role\": \"Founder\",\n  \"packageId\": \"dedicated-rpc-pool\",\n  \"budgetUsd\": 25000,\n  \"expectedMonthlyUnits\": 50000000,\n  \"urgency\": \"this_week\",\n  \"consent\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Enterprise Proposal",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/enterprise/proposals",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"leadId\": \"LEAD_ID_FROM_ENTERPRISE_LEAD\",\n  \"packageId\": \"dedicated-rpc-pool\",\n  \"expectedMonthlyUnits\": 50000000\n}"
+        }
+      }
+    },
+    {
+      "name": "Enterprise Summary",
+      "request": { "method": "GET", "url": "{{baseUrl}}/enterprise/summary" }
+    },
+    {
+      "name": "Anomaly Report",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "x-admin-api-key", "value": "{{adminApiKey}}" }],
+        "url": "{{baseUrl}}/analytics/anomalies"
+      }
+    }
+  ]
+}

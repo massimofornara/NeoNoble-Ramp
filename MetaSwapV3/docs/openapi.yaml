@@ -1,0 +1,339 @@
+openapi: 3.1.0
+info:
+  title: MetaSwap V3 Core API
+  version: 1.0.6
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /health:
+    get:
+      responses:
+        "200":
+          description: Service health
+  /assets:
+    get:
+      responses:
+        "200":
+          description: Asset registry
+  /tokens:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [issuerId, symbol, maxSupply, issuePriceUsd]
+              properties:
+                issuerId: { type: string }
+                symbol: { type: string }
+                name: { type: string }
+                maxSupply: { type: number }
+                issuePriceUsd: { type: number }
+                chains:
+                  type: array
+                  items: { type: string }
+                contracts:
+                  type: object
+      responses:
+        "201":
+          description: Token registered
+  /tokens/deployment/prepare:
+    post:
+      responses:
+        "201":
+          description: Wallet-signable token deployment transaction
+  /orders:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, symbol, side, amount]
+              properties:
+                userId: { type: string }
+                symbol: { type: string }
+                quoteAsset: { type: string }
+                side: { enum: [buy, sell] }
+                amount: { type: number }
+      responses:
+        "201":
+          description: Order result
+  /fiat/deposit:
+    post:
+      responses:
+        "201":
+          description: Fiat deposit booking
+  /fiat/payout:
+    post:
+      responses:
+        "201":
+          description: Fiat payout instruction
+  /custody/withdraw:
+    post:
+      responses:
+        "201":
+          description: Custody withdrawal instruction
+  /proof/reserves-liabilities:
+    get:
+      responses:
+        "200":
+          description: Proof of reserves and liabilities snapshot
+  /travel-rule/messages:
+    get:
+      responses:
+        "200":
+          description: Internal Travel Rule message queue
+  /settlement/status:
+    get:
+      responses:
+        "200":
+          description: Settlement orchestration state
+  /metrics:
+    get:
+      responses:
+        "200":
+          description: Prometheus metrics
+  /developer/plans:
+    get:
+      responses:
+        "200":
+          description: Public API monetization plans
+  /enterprise/packages:
+    get:
+      responses:
+        "200":
+          description: High-ticket enterprise infrastructure packages
+  /enterprise/leads:
+    post:
+      responses:
+        "201":
+          description: Consent-based enterprise lead capture
+    get:
+      responses:
+        "200":
+          description: Admin enterprise lead pipeline
+  /enterprise/proposals:
+    post:
+      responses:
+        "201":
+          description: Enterprise proposal draft with setup, pilot and MRR pricing
+    get:
+      responses:
+        "200":
+          description: Admin enterprise proposals
+  /enterprise/touches:
+    post:
+      responses:
+        "201":
+          description: Admin record of a real outbound or follow-up touch
+  /enterprise/payments:
+    post:
+      responses:
+        "201":
+          description: Admin record of a verified external payment reference
+  /enterprise/summary:
+    get:
+      responses:
+        "200":
+          description: Enterprise revenue funnel summary
+  /enterprise/forecast:
+    get:
+      responses:
+        "200":
+          description: 24-72 hour weighted enterprise revenue forecast
+  /enterprise/outbound-assets:
+    get:
+      responses:
+        "200":
+          description: Consent-safe outbound sequences and sales assets
+  /developer/onboard:
+    post:
+      responses:
+        "201":
+          description: Self-service trial onboarding and API key issuance
+  /developer/me:
+    get:
+      responses:
+        "200":
+          description: Developer usage dashboard for the provided API key
+  /developer/api-keys:
+    post:
+      responses:
+        "201":
+          description: Create an API key for a developer customer
+  /developer/subscriptions:
+    post:
+      responses:
+        "201":
+          description: Register a paid API subscription
+  /developer/summary:
+    get:
+      responses:
+        "200":
+          description: Developer platform usage and invoice preview
+  /developer/invoices:
+    get:
+      responses:
+        "200":
+          description: Usage-based invoice quote
+  /rpc/products:
+    get:
+      responses:
+        "200":
+          description: Premium RPC and infrastructure monetization products
+  /rpc/proxy:
+    post:
+      responses:
+        "201":
+          description: Metered premium RPC proxy
+  /tx/acceleration/quote:
+    post:
+      responses:
+        "201":
+          description: MEV-safe transaction acceleration quote
+  /tx/relay:
+    post:
+      responses:
+        "201":
+          description: User-consented transaction relay broadcast
+  /webhooks:
+    post:
+      responses:
+        "201":
+          description: Create a signed webhook subscription
+  /webhooks/summary:
+    get:
+      responses:
+        "200":
+          description: Webhook queue and delivery status
+  /analytics/anomalies:
+    get:
+      responses:
+        "200":
+          description: Operational anomaly report
+  /wallet:
+    get:
+      responses:
+        "200":
+          description: Self-hosted browser wallet connector
+  /wallets/challenge:
+    post:
+      responses:
+        "201":
+          description: Wallet authentication challenge
+  /wallets/verify:
+    post:
+      responses:
+        "201":
+          description: Verified wallet session
+  /wallets/portfolio/{userId}:
+    get:
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cross-chain wallet portfolio
+  /wallets/token-import/{symbol}/{chain}:
+    get:
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: chain
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Wallet token import metadata
+  /onchain/gas-estimate:
+    post:
+      responses:
+        "201":
+          description: Multi-chain gas or fee estimate
+  /onchain/broadcast:
+    post:
+      responses:
+        "201":
+          description: Multi-chain transaction broadcast
+  /onchain/deposits/scan:
+    post:
+      responses:
+        "201":
+          description: Deposit and transfer event scan
+  /treasury/exposure/{symbol}:
+    get:
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Real-time treasury exposure
+  /admin/markets/halt:
+    post:
+      responses:
+        "201":
+          description: Halt a market
+  /admin/markets/resume:
+    post:
+      responses:
+        "201":
+          description: Resume a market
+  /admin/stress-test:
+    post:
+      responses:
+        "201":
+          description: Run liquidity stress test
+  /admin/reconcile:
+    post:
+      responses:
+        "201":
+          description: Run reconciliation
+  /providers:
+    get:
+      responses:
+        "200":
+          description: Hot-swappable provider registry
+  /providers/status:
+    post:
+      responses:
+        "201":
+          description: Update provider operating status
+  /secrets/status:
+    get:
+      responses:
+        "200":
+          description: Secret lifecycle status
+  /secrets/seal:
+    post:
+      responses:
+        "201":
+          description: Seal or rotate secret metadata
+  /regions/status:
+    get:
+      responses:
+        "200":
+          description: Multi-region deployment status
+  /regions/failover:
+    post:
+      responses:
+        "201":
+          description: Execute controlled regional failover
+  /compliance/evidence/generate:
+    post:
+      responses:
+        "201":
+          description: Generate regulatory evidence package

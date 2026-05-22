@@ -1,0 +1,7 @@
+.data/
+.backups/
+*.log
+.env
+.env.production
+.env.staging
+node_modules/

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MetaSwapV3 Developer Platform</title>
+    <style>
+      :root { --ink:#101820; --muted:#586474; --line:#d9dee7; --bg:#f6f8fb; --panel:#fff; --blue:#1454d4; --green:#0f7b5f; }
+      * { box-sizing:border-box; }
+      body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); letter-spacing:0; }
+      header { background:#fff; border-bottom:1px solid var(--line); }
+      nav, main { max-width:1180px; margin:0 auto; padding:0 24px; }
+      nav { min-height:64px; display:flex; align-items:center; justify-content:space-between; }
+      a { color:inherit; }
+      .brand { font-weight:800; }
+      .button { background:var(--ink); color:white; border:1px solid var(--ink); padding:10px 14px; text-decoration:none; font-weight:800; min-height:42px; display:inline-flex; align-items:center; justify-content:center; }
+      .button.secondary { color:var(--ink); background:white; }
+      .hero { padding:54px 24px 28px; display:grid; grid-template-columns:1fr 420px; gap:34px; align-items:start; }
+      h1 { font-size:56px; line-height:1; margin:10px 0 16px; letter-spacing:0; }
+      .lead { color:var(--muted); font-size:18px; line-height:1.55; max-width:680px; }
+      .eyebrow { color:var(--blue); font-size:13px; text-transform:uppercase; font-weight:900; }
+      .panel { background:var(--panel); border:1px solid var(--line); padding:18px; }
+      .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:24px 0; }
+      .card { background:var(--panel); border:1px solid var(--line); padding:18px; min-height:150px; }
+      .card h2 { margin:0 0 8px; font-size:20px; }
+      .card p, .muted { color:var(--muted); line-height:1.5; }
+      code, pre { font-family:"SFMono-Regular", Consolas, monospace; }
+      pre { background:#101820; color:#eaf2ff; padding:16px; overflow:auto; font-size:13px; }
+      form { display:grid; gap:10px; }
+      input, select { width:100%; min-height:42px; padding:10px; border:1px solid var(--line); }
+      label { display:grid; gap:6px; color:var(--muted); font-size:12px; font-weight:900; text-transform:uppercase; }
+      .check { display:flex; gap:8px; align-items:center; font-size:13px; text-transform:none; font-weight:500; }
+      .check input { width:auto; min-height:auto; }
+      #result { color:var(--green); font-weight:800; white-space:pre-wrap; }
+      @media (max-width:900px){ .hero,.grid{grid-template-columns:1fr;} h1{font-size:42px;} }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand">MetaSwapV3 Developers</div>
+        <div><a class="button secondary" href="/">Home</a></div>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Premium RPC, relay, analytics and webhooks</div>
+          <h1>Start building on MetaSwapV3 in minutes.</h1>
+          <p class="lead">Create a trial API key, call premium multi-chain RPC, subscribe to signed webhooks and upgrade into paid infrastructure plans when usage is real.</p>
+          <pre>curl -X POST http://127.0.0.1:8088/rpc/proxy \
+  -H "content-type: application/json" \
+  -H "x-api-key: $METASWAP_API_KEY" \
+  -d '{"chain":"ethereum","method":"eth_blockNumber","params":[]}'</pre>
+        </div>
+        <div class="panel">
+          <h2>Get a trial key</h2>
+          <form id="onboard">
+            <label>Email<input name="email" type="email" required></label>
+            <label>Company<input name="company" required></label>
+            <label>Name<input name="name"></label>
+            <label>Use case<select name="useCase"><option>premium_rpc</option><option>tx_relay</option><option>webhooks</option><option>wallet_analytics</option></select></label>
+            <label>Expected monthly units<input name="expectedMonthlyUnits" type="number" min="0" value="100000"></label>
+            <label class="check"><input name="consent" type="checkbox" required> I agree to be contacted and to the API trial terms.</label>
+            <button class="button" type="submit">Create trial key</button>
+          </form>
+          <p id="result"></p>
+        </div>
+      </section>
+      <section class="grid">
+        <div class="card"><h2>Premium RPC</h2><p>Multi-provider failover, metered requests, enterprise overage pricing and chain-level reporting.</p></div>
+        <div class="card"><h2>MEV-Safe Relay</h2><p>User-consented transaction relay with acceleration quote, audit log and no exploit or sandwich behavior.</p></div>
+        <div class="card"><h2>Webhook Streams</h2><p>Signed delivery queue for token launches, trades, deposits, payouts and compliance events.</p></div>
+      </section>
+    </main>
+    <script>
+      document.getElementById("onboard").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+        data.consent = data.consent === "on";
+        data.expectedMonthlyUnits = Number(data.expectedMonthlyUnits || 0);
+        const response = await fetch("/developer/onboard", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        document.getElementById("result").textContent = response.ok
+          ? `API key created:\n${result.apiKey}\n\nNext: GET /developer/me with x-api-key.`
+          : result.error;
+      });
+    </script>
+  </body>
+</html>

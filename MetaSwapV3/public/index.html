@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MetaSwapV3 | Token Markets, RFQ Liquidity, Custody and Fiat Rails</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #101820;
+        --muted: #52606d;
+        --line: #d8dde4;
+        --panel: #ffffff;
+        --blue: #1454d4;
+        --green: #0f7b5f;
+        --amber: #a15c00;
+        --bg: #f5f7fa;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); letter-spacing: 0; }
+      a { color: inherit; }
+      header { border-bottom: 1px solid var(--line); background: rgba(255,255,255,.96); position: sticky; top: 0; z-index: 10; }
+      nav { max-width: 1180px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+      .brand { font-weight: 800; font-size: 18px; }
+      .navlinks { display: flex; gap: 18px; align-items: center; color: var(--muted); font-size: 14px; }
+      .button { border: 1px solid var(--ink); background: var(--ink); color: white; padding: 10px 14px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; min-height: 40px; }
+      .button.secondary { background: white; color: var(--ink); }
+      .hero { max-width: 1180px; margin: 0 auto; min-height: calc(100vh - 64px); padding: 58px 24px 34px; display: grid; grid-template-columns: minmax(0, .92fr) minmax(420px, 1.08fr); gap: 42px; align-items: center; }
+      .eyebrow { color: var(--blue); font-weight: 800; font-size: 13px; text-transform: uppercase; }
+      h1 { font-size: clamp(44px, 7vw, 82px); line-height: .94; margin: 14px 0 18px; max-width: 720px; letter-spacing: 0; }
+      .lead { font-size: 19px; line-height: 1.55; color: var(--muted); max-width: 660px; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+      .note { margin-top: 18px; color: var(--muted); font-size: 13px; max-width: 620px; }
+      .terminal { background: var(--panel); border: 1px solid var(--line); box-shadow: 0 18px 60px rgba(16,24,32,.12); }
+      .terminal-head { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding: 14px 16px; font-size: 13px; color: var(--muted); }
+      .terminal-body { padding: 16px; display: grid; gap: 14px; }
+      .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .metric { border: 1px solid var(--line); padding: 12px; min-height: 86px; background: #fbfcfe; }
+      .metric b { display: block; font-size: 22px; margin-top: 8px; }
+      .metric span, th { color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 800; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+      .status { font-weight: 800; color: var(--green); }
+      .band { border-top: 1px solid var(--line); background: white; }
+      .inner { max-width: 1180px; margin: 0 auto; padding: 34px 24px; }
+      .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .item { border-left: 3px solid var(--blue); padding: 4px 0 4px 14px; }
+      .item h2 { margin: 0 0 8px; font-size: 20px; }
+      .item p { margin: 0; color: var(--muted); line-height: 1.5; }
+      form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 18px; align-items: end; }
+      label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+      input, select { width: 100%; padding: 11px 10px; border: 1px solid var(--line); color: var(--ink); background: white; min-height: 42px; }
+      .consent { grid-column: span 3; display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); text-transform: none; font-weight: 500; }
+      .consent input { width: auto; min-height: auto; }
+      #leadResult { margin-top: 12px; color: var(--green); font-weight: 700; min-height: 20px; }
+      @media (max-width: 900px) {
+        .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 34px; }
+        .terminal { order: -1; }
+        .three, form, .metric-grid { grid-template-columns: 1fr; }
+        .consent { grid-column: auto; }
+        .navlinks a:not(.button) { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand">MetaSwapV3</div>
+        <div class="navlinks">
+          <a href="#growth">Growth</a>
+          <a href="/wallet">Wallet</a>
+          <a class="button secondary" href="/revenue/summary">Revenue API</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Production token markets infrastructure</div>
+          <h1>Launch token markets with RFQ liquidity, custody and fiat settlement.</h1>
+          <p class="lead">MetaSwapV3 is built for issuers, brokers and fintech operators that need token factory workflows, internal ledger control, wallet sync, market surveillance and regulated payout orchestration.</p>
+          <div class="actions">
+            <a class="button" href="#growth">Start issuer launch</a>
+            <a class="button secondary" href="/wallet">Connect wallet</a>
+          </div>
+          <p class="note">No investment return is promised. Product access is subject to KYB/KYC, jurisdiction checks, liquidity availability and regulatory classification.</p>
+        </div>
+        <div class="terminal" aria-label="MetaSwapV3 product snapshot">
+          <div class="terminal-head">
+            <span>Live Operating Console</span>
+            <strong>RFQ / Ledger / Proof</strong>
+          </div>
+          <div class="terminal-body">
+            <div class="metric-grid">
+              <div class="metric"><span>Target Model</span><b>$10M</b><small>monthly revenue target model</small></div>
+              <div class="metric"><span>Required Flow</span><b>$60.6M</b><small>daily volume at 55 bps</small></div>
+              <div class="metric"><span>Revenue Hooks</span><b>6</b><small>fee and B2B monetization levers</small></div>
+            </div>
+            <table>
+              <thead><tr><th>Module</th><th>Status</th><th>Revenue Lever</th></tr></thead>
+              <tbody>
+                <tr><td>Token Factory</td><td class="status">wired</td><td>issuer setup</td></tr>
+                <tr><td>RFQ Engine</td><td class="status">wired</td><td>trading fee</td></tr>
+                <tr><td>Fiat Gateway</td><td class="status">wired</td><td>payout fee</td></tr>
+                <tr><td>Proof Systems</td><td class="status">wired</td><td>enterprise reporting</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section class="band">
+        <div class="inner three">
+          <div class="item"><h2>For Issuers</h2><p>Token launch, legal metadata, controlled listing, RFQ liquidity and market surveillance in one workflow.</p></div>
+          <div class="item"><h2>For Fintechs</h2><p>Wallet auth, ledger, pricing, portfolio and payout orchestration behind clean APIs.</p></div>
+          <div class="item"><h2>For Liquidity Partners</h2><p>RFQ routing, limits, quote quality tracking and reconciliation-ready settlement events.</p></div>
+        </div>
+      </section>
+      <section class="band" id="growth">
+        <div class="inner">
+          <div class="eyebrow">Aggressive compliant growth funnel</div>
+          <h2>Apply for the launch pipeline</h2>
+          <form id="leadForm">
+            <label>Email<input name="email" type="email" required placeholder="founder@company.com"></label>
+            <label>Company<input name="company" required placeholder="Company"></label>
+            <label>Role<input name="role" placeholder="Founder / CTO / Head of Product"></label>
+            <label>Segment
+              <select name="segment">
+                <option value="token_issuers">Token issuer</option>
+                <option value="brokers_fintechs">Broker / fintech</option>
+                <option value="market_makers_otc">Market maker / OTC</option>
+                <option value="web3_builders">Web3 builder</option>
+              </select>
+            </label>
+            <label>Monthly volume USD<input name="expectedMonthlyVolumeUsd" type="number" min="0" placeholder="1000000"></label>
+            <label>Budget USD<input name="budgetUsd" type="number" min="0" placeholder="25000"></label>
+            <label>Jurisdiction<input name="jurisdiction" value="EU"></label>
+            <label class="consent"><input name="consent" type="checkbox" required> I consent to be contacted about MetaSwapV3 business onboarding.</label>
+            <button class="button" type="submit">Submit lead</button>
+          </form>
+          <div id="leadResult"></div>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.getElementById("leadForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+        data.consent = data.consent === "on";
+        data.budgetUsd = Number(data.budgetUsd || 0);
+        data.expectedMonthlyVolumeUsd = Number(data.expectedMonthlyVolumeUsd || 0);
+        const response = await fetch("/growth/leads", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        document.getElementById("leadResult").textContent = response.ok
+          ? `Captured: ${result.status}. Next action: ${result.nextAction}.`
+          : result.error;
+      });
+    </script>
+  </body>
+</html>

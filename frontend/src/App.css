@@ -1,0 +1,83 @@
+.App {
+  min-height: 100vh;
+}
+
+/* Mobile Responsive Overrides */
+@media (max-width: 768px) {
+  /* Dashboard header */
+  header .max-w-7xl {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  header .flex.items-center.space-x-4 {
+    gap: 0.5rem;
+  }
+  header .flex.items-center.space-x-4 > a.text-gray-300,
+  header .flex.items-center.space-x-4 > span.text-gray-400 {
+    display: none;
+  }
+
+  /* Trading forms */
+  .grid.lg\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+  .grid.grid-cols-3.sm\:grid-cols-6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Dashboard nav cards */
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar for admin: overlay on mobile */
+  .min-h-screen.flex > .w-60 {
+    position: fixed;
+    z-index: 40;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* Table overflow */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Chart containers */
+  .w-32.h-32 {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  /* Modal-like panels */
+  .max-w-md, .max-w-lg {
+    max-width: 95vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Extra small: stack everything */
+  .grid.grid-cols-2.md\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid.grid-cols-2.md\:grid-cols-4.lg\:grid-cols-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Reduce padding */
+  .px-4.sm\:px-6.lg\:px-8 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Font size adjustments */
+  h1.text-xl {
+    font-size: 1.125rem;
+  }
+  .text-2xl {
+    font-size: 1.25rem;
+  }
+}
+

@@ -1,0 +1,120 @@
+{
+  "summary": "Iteration 18 testing complete. All NEW features tested: Referral System (code generation, apply, stats, leaderboard), Advanced Portfolio Analytics (Sharpe ratio, Sortino ratio, max drawdown, volatility, correlation, diversification score), Enhanced KYC/AML Compliance (risk scoring, compliance reports, admin overview), Multi-language i18n (Spanish added - now 5 languages). 22/22 backend tests passed (100%). Frontend fully functional with all UI elements verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Console",
+        "issues": ["WalletConnect 401 error on preloadListings - non-critical, external service"]
+      },
+      {
+        "screen": "Portfolio Analytics",
+        "issues": ["Risk metrics section and diversification section only show when user has trading/wallet data - this is expected behavior"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration18_referral_analytics_kyc.py",
+    "/app/test_reports/pytest/pytest_results_iteration18.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Referral System fully working: code generation (8-char alphanumeric), apply code with validation, stats, leaderboard",
+    "Referral bonuses correctly configured: 0.001 NENO for referrer, 0.0005 NENO welcome bonus, 0.0005 NENO trade bonus",
+    "Cannot apply own referral code - correctly rejected with 400",
+    "Invalid referral code correctly rejected with 404",
+    "Advanced Analytics: Sharpe ratio, Sortino ratio, max drawdown, volatility (daily/annual), best/worst day, win/loss days",
+    "Correlation endpoint returns diversification score (0-100), HHI index, asset breakdown with weights",
+    "KYC Risk Score: 0-100 scale with factors (kyc_tier, velocity, alerts, account_age), risk_level (low/medium/high)",
+    "Compliance Report: Full user compliance data including KYC tier, risk score, volume (daily/weekly/monthly), limits, AML alerts",
+    "Admin Compliance Overview: KYC tier distribution, risk distribution, alert counts - correctly restricted to ADMIN role",
+    "i18n translations.js now has 5 languages: it, en, de, fr, es (Spanish added)",
+    "Settings page shows all 5 language options with proper selection UI",
+    "Dashboard has Referral card with BONUS badge linking to /referral"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration18_referral_analytics_kyc.py"
+  ],
+  "success_rate": {
+    "backend": "100% (22/22 tests passed)",
+    "frontend": "100% (all UI elements verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@neonobleramp.com / Admin1234!",
+    "regular_user": "testchart@example.com / Test1234!"
+  },
+  "seed_data_creation": "Admin referral code C4YJT8H3 created during testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 18 features all working: 1) Referral System at /referral with code generation, apply, stats, leaderboard. 2) Advanced Analytics at /api/analytics/advanced/portfolio-risk and /correlation with Sharpe, Sortino, max drawdown, volatility, diversification score. 3) Enhanced KYC at /api/kyc/risk-score, /compliance/report, /admin/compliance/overview. 4) i18n now has 5 languages (IT, EN, DE, FR, ES). 5) Dashboard has Referral card with BONUS badge. 6) Settings page shows all 5 language options.",
+  "features_tested": {
+    "referral_system": {
+      "GET /api/referral/code": "PASS - Returns/creates 8-char referral code with user_id, total_referrals, total_bonus_earned",
+      "POST /api/referral/apply": "PASS - Applies referral code, credits bonuses, validates own code rejection",
+      "GET /api/referral/stats": "PASS - Returns my_code, total_referrals, total_bonus_earned, referrals list, bonus amounts",
+      "GET /api/referral/leaderboard": "PASS - Returns top 20 referrers with username, total_referrals, total_bonus_earned",
+      "validation": "PASS - Own code rejected (400), invalid code rejected (404)"
+    },
+    "advanced_analytics": {
+      "GET /api/analytics/advanced/portfolio-risk": "PASS - Returns sharpe_ratio, sortino_ratio, max_drawdown, volatility, best/worst day, win/loss days",
+      "GET /api/analytics/advanced/correlation": "PASS - Returns assets, breakdown, diversification_score (0-100), hhi_index, asset_count",
+      "period_support": "PASS - Works for 7, 30, 90, 365 days"
+    },
+    "enhanced_kyc": {
+      "GET /api/kyc/risk-score": "PASS - Returns score (0-100), risk_level (low/medium/high), factors, computed_at",
+      "GET /api/kyc/compliance/report": "PASS - Returns full compliance data: kyc_tier, risk_score, volume, limits, aml_alerts",
+      "GET /api/kyc/admin/compliance/overview": "PASS - Admin-only, returns kyc_tiers, risk_distribution, alerts",
+      "access_control": "PASS - Admin overview correctly returns 403 for regular users"
+    },
+    "i18n": {
+      "translations.js": "PASS - Contains 5 languages: it, en, de, fr, es",
+      "settings_page": "PASS - Shows all 5 language options with proper UI"
+    },
+    "frontend_referral": {
+      "Referral page": "PASS - Loads at /referral with data-testid='referral-page'",
+      "Referral code display": "PASS - Shows code (C4YJT8H3) with copy button",
+      "Apply code input": "PASS - Input field and Applica button present",
+      "Share link button": "PASS - Condividi Link button present",
+      "Stats cards": "PASS - Referral Totali, NENO Guadagnati, Bonus Referrer, Bonus Trading",
+      "Leaderboard": "PASS - Classifica Top Referrer section present"
+    },
+    "frontend_portfolio": {
+      "Portfolio Analytics page": "PASS - Loads at /portfolio with data-testid='portfolio-analytics-page'",
+      "Summary cards": "PASS - Valore Totale, PnL Realizzato, PnL Non Realizzato, Win Rate",
+      "Export buttons": "PASS - Trade, Portfolio, Margin export buttons present",
+      "PnL chart": "PASS - Curva PnL with period selector (7d, 30d, 90d, all)"
+    },
+    "frontend_settings": {
+      "Settings page": "PASS - Loads at /settings with data-testid='settings-page'",
+      "Language tab": "PASS - Lingua tab clickable",
+      "5 languages": "PASS - IT, EN, DE, FR, ES all present with proper labels"
+    },
+    "frontend_dashboard": {
+      "Referral card": "PASS - Shows 'Referral' with BONUS badge and description 'Invita amici, guadagna NENO'",
+      "Referral link": "PASS - Card links to /referral"
+    }
+  },
+  "api_endpoints_verified": [
+    "GET /api/referral/code",
+    "POST /api/referral/apply",
+    "GET /api/referral/stats",
+    "GET /api/referral/leaderboard",
+    "GET /api/analytics/advanced/portfolio-risk",
+    "GET /api/analytics/advanced/correlation",
+    "GET /api/kyc/risk-score",
+    "GET /api/kyc/compliance/report",
+    "GET /api/kyc/admin/compliance/overview",
+    "GET /api/health",
+    "GET /api/kyc/status",
+    "GET /api/wallet/balances"
+  ],
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": ["Twilio SMS (no API keys configured)", "IBAN/SEPA banking (simulated rails)"]
+  }
+}

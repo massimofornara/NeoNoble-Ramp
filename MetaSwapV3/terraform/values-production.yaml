@@ -1,0 +1,7 @@
+replicaCount: 3
+image:
+  repository: metaswap-v3-core
+  tag: "1.0.0"
+env:
+  METASWAP_ENV: production
+  REQUIRE_LIVE_ADAPTERS: "true"

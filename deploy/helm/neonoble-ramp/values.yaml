@@ -1,0 +1,30 @@
+environment: production
+
+image:
+  repository: neonoble-ramp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+host: app.neonoble.io
+tlsSecretName: neonoble-ramp-tls
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 50
+  targetCPUUtilizationPercentage: 65
+  targetMemoryUtilizationPercentage: 75
+
+otel:
+  enabled: true
+  serviceName: neonoble-ramp

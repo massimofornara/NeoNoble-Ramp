@@ -1,0 +1,117 @@
+services:
+  metaswap-core:
+    build: .
+    image: metaswap-v3-core:1.0.0
+    restart: unless-stopped
+    environment:
+      METASWAP_ENV: production
+      HOST: 0.0.0.0
+      PORT: ${PORT:-8080}
+      SQLITE_PATH: ${SQLITE_PATH:-/app/.data/metaswap.sqlite}
+      REQUIRE_LIVE_ADAPTERS: "true"
+      ADMIN_API_KEY: ${ADMIN_API_KEY:?required}
+      INTERNAL_HSM_MASTER_KEY: ${INTERNAL_HSM_MASTER_KEY:?required}
+      BANKING_BASE_URL: ${BANKING_BASE_URL:?required}
+      BANKING_API_KEY: ${BANKING_API_KEY:?required}
+      BANKING_HMAC_SECRET: ${BANKING_HMAC_SECRET:?required}
+      CARD_BASE_URL: ${CARD_BASE_URL:?required}
+      CARD_API_KEY: ${CARD_API_KEY:?required}
+      CARD_HMAC_SECRET: ${CARD_HMAC_SECRET:?required}
+      CUSTODY_BASE_URL: ${CUSTODY_BASE_URL:?required}
+      CUSTODY_API_KEY: ${CUSTODY_API_KEY:?required}
+      CUSTODY_HMAC_SECRET: ${CUSTODY_HMAC_SECRET:?required}
+      MARKET_MAKER_BASE_URL: ${MARKET_MAKER_BASE_URL:?required}
+      MARKET_MAKER_API_KEY: ${MARKET_MAKER_API_KEY:?required}
+      MARKET_MAKER_HMAC_SECRET: ${MARKET_MAKER_HMAC_SECRET:?required}
+      HEDGING_BASE_URL: ${HEDGING_BASE_URL:?required}
+      HEDGING_API_KEY: ${HEDGING_API_KEY:?required}
+      HEDGING_HMAC_SECRET: ${HEDGING_HMAC_SECRET:?required}
+      AML_BASE_URL: ${AML_BASE_URL:?required}
+      AML_API_KEY: ${AML_API_KEY:?required}
+      AML_HMAC_SECRET: ${AML_HMAC_SECRET:?required}
+      TRAVEL_RULE_BASE_URL: ${TRAVEL_RULE_BASE_URL:?required}
+      TRAVEL_RULE_API_KEY: ${TRAVEL_RULE_API_KEY:?required}
+      TRAVEL_RULE_HMAC_SECRET: ${TRAVEL_RULE_HMAC_SECRET:?required}
+      ETHEREUM_RPC_URLS: ${ETHEREUM_RPC_URLS:?required}
+      ETHEREUM_CHAIN_ID: ${ETHEREUM_CHAIN_ID:-1}
+      ETHEREUM_TOKEN_FACTORY_ADDRESS: ${ETHEREUM_TOKEN_FACTORY_ADDRESS:?required}
+      BNB_RPC_URLS: ${BNB_RPC_URLS:?required}
+      BNB_CHAIN_ID: ${BNB_CHAIN_ID:-56}
+      BNB_TOKEN_FACTORY_ADDRESS: ${BNB_TOKEN_FACTORY_ADDRESS:?required}
+      SOLANA_RPC_URLS: ${SOLANA_RPC_URLS:?required}
+      SOLANA_CHAIN_ID: ${SOLANA_CHAIN_ID:-mainnet-beta}
+      SOLANA_TOKEN_FACTORY_ADDRESS: ${SOLANA_TOKEN_FACTORY_ADDRESS:?required}
+      BASE_RPC_URLS: ${BASE_RPC_URLS:?required}
+      BASE_CHAIN_ID: ${BASE_CHAIN_ID:-8453}
+      BASE_TOKEN_FACTORY_ADDRESS: ${BASE_TOKEN_FACTORY_ADDRESS:?required}
+      POLYGON_RPC_URLS: ${POLYGON_RPC_URLS:?required}
+      POLYGON_CHAIN_ID: ${POLYGON_CHAIN_ID:-137}
+      POLYGON_TOKEN_FACTORY_ADDRESS: ${POLYGON_TOKEN_FACTORY_ADDRESS:?required}
+      REVENUE_CRYPTO_WALLET: ${REVENUE_CRYPTO_WALLET:-0xD436E1FbDFFD0a538D0A44A93c0dD52f92221862}
+      REVENUE_CRYPTO_CHAIN: ${REVENUE_CRYPTO_CHAIN:-ethereum}
+      REVENUE_FIAT_IBAN_1: ${REVENUE_FIAT_IBAN_1:-IT22B0200822800000103317304}
+      REVENUE_FIAT_NAME_1: ${REVENUE_FIAT_NAME_1:-Massimo Fornara}
+      REVENUE_FIAT_SHARE_BPS_1: ${REVENUE_FIAT_SHARE_BPS_1:-5000}
+      REVENUE_FIAT_IBAN_2: ${REVENUE_FIAT_IBAN_2:-BE06967614820722}
+      REVENUE_FIAT_NAME_2: ${REVENUE_FIAT_NAME_2:-NeoNoble Company}
+      REVENUE_FIAT_SHARE_BPS_2: ${REVENUE_FIAT_SHARE_BPS_2:-5000}
+      REVENUE_MIN_SWEEP_USD: ${REVENUE_MIN_SWEEP_USD:-25}
+      REVENUE_AUTO_SWEEP_ENABLED: ${REVENUE_AUTO_SWEEP_ENABLED:-false}
+      REVENUE_TARGET_MONTHLY_USD: ${REVENUE_TARGET_MONTHLY_USD:-1000000}
+      REVENUE_NEXT_TARGET_MONTHLY_USD: ${REVENUE_NEXT_TARGET_MONTHLY_USD:-10000000}
+      DEVELOPER_BOOTSTRAP_API_KEY: ${DEVELOPER_BOOTSTRAP_API_KEY:?required}
+      WEBHOOK_SIGNING_SECRET: ${WEBHOOK_SIGNING_SECRET:?required}
+    ports:
+      - "8080:8080"
+    volumes:
+      - metaswap-data:/app/.data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redpanda:
+    image: redpandadata/redpanda:v24.3.1
+    command: ["redpanda", "start", "--overprovisioned", "--smp", "1", "--memory", "1G", "--reserve-memory", "0M", "--node-id", "0", "--check=false", "--kafka-addr", "PLAINTEXT://0.0.0.0:9092", "--advertise-kafka-addr", "PLAINTEXT://redpanda:9092"]
+    restart: unless-stopped
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: metaswap
+      POSTGRES_USER: metaswap
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.12
+    restart: unless-stopped
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+
+  prometheus:
+    image: prom/prometheus:v3.0.1
+    restart: unless-stopped
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./ops/prometheus-alerts.yml:/etc/prometheus/alerts.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  metaswap-data:
+  redpanda-data:
+  postgres-data:
+  clickhouse-data:
+  grafana-data:

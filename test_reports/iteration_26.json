@@ -1,0 +1,106 @@
+{
+  "summary": "Iteration 26 - NeoNoble Ramp 100% Operational. All features verified: (1) verify-deposit correctly credits NENO to internal wallet + creates transaction record + sends notification, (2) blockchain listener actively monitors hot wallet for incoming NENO transfers, (3) All 6 tabs present on /neno-exchange page, (4) Sell shows 'Saldo NENO insufficiente' for large amounts (NOT generic error), (5) All CRUD operations (buy/sell/swap) work with settlement hashes.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration26_neno_ramp.py",
+    "/app/test_reports/pytest/pytest_results_iteration26.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "verify-deposit endpoint now properly: (a) credits NENO to user's internal wallet, (b) creates transaction record in neno_transactions, (c) sends notification via notify_trade_executed",
+    "blockchain_listener.py has monitor_hot_wallet() that scans ALL incoming NENO transfers to hot wallet address",
+    "Hot wallet monitor started and running (confirmed in backend logs)",
+    "MongoDB onchain_deposits collection has verified deposit with credited=True",
+    "MongoDB neno_transactions collection has onchain_deposit record with status=completed",
+    "Admin NENO balance correctly reflects credited deposits (~9679.37 NENO)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration26_neno_ramp.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (All UI elements and operations verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@neonobleramp.com / Admin1234!"
+  },
+  "seed_data_creation": "None - used existing admin account",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 26 verified full operational status of NeoNoble Ramp. Key verifications: (1) verify-deposit with already processed tx hash 0x4aba1b5b...ceb7 returns 'Transazione gia processata', (2) verify-deposit with fake hash returns error, (3) All exchange operations (buy/sell/swap) work with settlement hashes, (4) Deposita tab shows QR code and platform wallet 0x18CE1930820d5e1B87F37a8a2F7Cf59E7BF6da4E, (5) Sell with insufficient balance shows specific error 'Saldo NENO insufficiente: X disponibile', (6) MongoDB collections verified: onchain_deposits has credited=True, neno_transactions has onchain_deposit type.",
+  "features_tested": {
+    "backend_endpoints": {
+      "POST /api/auth/login": "PASS - Admin login successful",
+      "POST /api/neno-exchange/verify-deposit (already processed)": "PASS - Returns 400 'Transazione gia processata'",
+      "POST /api/neno-exchange/verify-deposit (fake hash)": "PASS - Returns error (tx not found)",
+      "POST /api/neno-exchange/sell": "PASS - Returns success with settlement_hash",
+      "POST /api/neno-exchange/buy": "PASS - Returns success with settlement_hash",
+      "POST /api/neno-exchange/swap": "PASS - Returns success with settlement_hash",
+      "POST /api/neno-exchange/sell (with tx_hash field)": "PASS - Field accepted",
+      "GET /api/neno-exchange/platform-wallet": "PASS - Returns 0x18CE1930820d5e1B87F37a8a2F7Cf59E7BF6da4E",
+      "GET /api/neno-exchange/transactions": "PASS - Returns transactions including onchain_deposit type",
+      "GET /api/health": "PASS",
+      "GET /api/neno-exchange/market": "PASS",
+      "GET /api/neno-exchange/price": "PASS - EUR 10,000 dynamic pricing",
+      "GET /api/neno-exchange/quote": "PASS"
+    },
+    "frontend_ui": {
+      "NENO Exchange page loads": "PASS",
+      "All 6 tabs visible": "PASS - Compra, Vendi, Swap, Deposita, Off-Ramp, Crea Token",
+      "Deposita tab - QR code": "PASS - QRCodeSVG renders correctly",
+      "Deposita tab - wallet address": "PASS - 0x18CE1930820d5e1B87F37a8a2F7Cf59E7BF6da4E",
+      "Deposita tab - 3-step instructions": "PASS",
+      "Deposita tab - token info": "PASS - NENO ERC-20, BSC, 18 decimals",
+      "Deposita tab - security warning": "PASS",
+      "Sell insufficient balance error": "PASS - Shows 'Saldo NENO insufficiente: 9679.369 disponibile'",
+      "Sell valid amount": "PASS - Shows success with settlement hash and BSCScan link",
+      "NENO Balance display": "PASS - Shows 9679.3690"
+    },
+    "mongodb_verification": {
+      "onchain_deposits collection": "PASS - Has verified deposit with credited=True",
+      "neno_transactions collection": "PASS - Has onchain_deposit record with status=completed",
+      "Admin NENO wallet balance": "PASS - ~9679.37 NENO"
+    },
+    "blockchain_listener": {
+      "Hot wallet monitor started": "PASS - Confirmed in backend logs",
+      "BSC RPC connected": "PASS - Block 90828709",
+      "Polling interval": "120s"
+    }
+  },
+  "api_endpoints_verified": [
+    "POST /api/auth/login",
+    "POST /api/neno-exchange/verify-deposit",
+    "POST /api/neno-exchange/sell",
+    "POST /api/neno-exchange/buy",
+    "POST /api/neno-exchange/swap",
+    "GET /api/neno-exchange/platform-wallet",
+    "GET /api/neno-exchange/transactions",
+    "GET /api/health",
+    "GET /api/neno-exchange/market",
+    "GET /api/neno-exchange/price",
+    "GET /api/neno-exchange/quote"
+  ],
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "Using real Alchemy BSC RPC for on-chain operations"
+  },
+  "blockchain_listener_verification": {
+    "hot_wallet_monitor": "PASS - Started and running",
+    "hot_wallet_address": "0x18CE1930820d5e1B87F37a8a2F7Cf59E7BF6da4E",
+    "bsc_rpc_connected": "PASS - Block 90828709",
+    "polling_interval": "120s",
+    "log_messages": [
+      "Hot wallet monitor started for 0x18CE193082...",
+      "Starting hot wallet monitor for 0x18CE1930... (interval: 120s)"
+    ]
+  }
+}

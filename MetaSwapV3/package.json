@@ -1,0 +1,26 @@
+{
+  "name": "metaswap-v3-fintech-core",
+  "version": "1.0.6",
+  "description": "Self-hosted hybrid exchange, tokenization, ledger, custody, compliance and fiat adapter platform.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node --use-system-ca src/server.js",
+    "test": "node --test",
+    "deploy:token-factories": "node --use-system-ca scripts/deploy-token-factories.mjs",
+    "wise:readiness": "node --use-system-ca scripts/wise-readiness.mjs",
+    "wise:discover": "node --use-system-ca scripts/wise-discover.mjs",
+    "wise:sync-ledger": "node --use-system-ca scripts/wise-sync-ledger.mjs",
+    "wise:repair-ledger-view": "node --use-system-ca scripts/repair-wise-ledger-materialized-view.mjs",
+    "sync:m10037205-deposit": "node --use-system-ca scripts/sync-m10037205-real-deposit.mjs",
+    "flow:end-to-end-core": "node --use-system-ca scripts/run-end-to-end-core-flow.mjs",
+    "scale:local": "node --use-system-ca scripts/scale-local-readiness.mjs"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0",
+    "solc": "^0.8.30"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

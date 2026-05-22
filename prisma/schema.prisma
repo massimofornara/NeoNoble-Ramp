@@ -1,0 +1,195 @@
+// NeoNoble Ramp - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  apiClients ApiClient[]
+
+  @@index([email])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model ApiClient {
+  id           String   @id @default(uuid())
+  ownerId      String
+  name         String
+  apiKey       String   @unique
+  apiSecret    String
+  status       ApiClientStatus @default(ACTIVE)
+  rateLimitDay Int      @default(1000)
+  totalCalls   Int      @default(0)
+  totalFeeBase Decimal  @default(0) @db.Decimal(20, 2)
+  
+  // Rate Limiting
+  lastResetAt  DateTime @default(now())
+  dailyCalls   Int      @default(0)
+  
+  createdAt    DateTime @default(now())
+  lastUsedAt   DateTime?
+
+  owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  rampSessions RampSession[]
+
+  @@index([apiKey])
+  @@index([ownerId])
+}
+
+enum ApiClientStatus {
+  ACTIVE
+  DISABLED
+}
+
+model ApiCallLog {
+  id               String   @id @default(uuid())
+  apiClientId      String?  // Can be ApiClient ID or PlatformApiKey ID
+  endpoint         String
+  method           String
+  statusCode       Int
+  createdAt        DateTime @default(now())
+  extraMeta        Json?
+
+  @@index([apiClientId])
+  @@index([createdAt])
+}
+
+model RampSession {
+  id                String            @id
+  apiClientId       String
+  type              RampSessionType
+  tokenSymbol       String
+  chain             String
+  amountFiat        Decimal           @db.Decimal(20, 2)
+  tokens            Decimal           @db.Decimal(30, 18)
+  feeBase           Decimal           @db.Decimal(20, 2)
+  status            RampSessionStatus @default(PENDING)
+  checkoutUrl       String
+  userWallet        String?
+  payoutDestination String?
+  
+  // Payment Gateway Fields
+  paymentProvider   String?           // 'stripe', 'mock', etc.
+  paymentSessionId  String?           // Stripe checkout session ID
+  paymentIntentId   String?           // Stripe payment intent ID
+  paymentStatus     String?           // Gateway-specific status
+  
+  // Blockchain Fields
+  txHash            String?           // BSC transaction hash
+  txStatus          String?           // pending, confirmed, failed
+  blockNumber       Int?              // Block number of confirmation
+  gasUsed           String?           // Gas used for transaction
+  
+  // Metadata
+  errorMessage      String?           @db.Text
+  retryCount        Int               @default(0)
+  lastProcessedAt   DateTime?
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  apiClient ApiClient @relation(fields: [apiClientId], references: [id], onDelete: Cascade)
+
+  @@index([apiClientId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([paymentSessionId])
+  @@index([txHash])
+}
+
+enum RampSessionType {
+  ONRAMP
+  OFFRAMP
+}
+
+enum RampSessionStatus {
+  PENDING
+  AWAITING_PAYMENT
+  PROCESSING
+  PAYMENT_CONFIRMED
+  CHAIN_PENDING
+  CHAIN_CONFIRMED
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Nonce {
+  id          String   @id @default(uuid())
+  apiClientId String
+  nonce       String   
+  timestamp   String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([apiClientId, nonce])
+  @@index([expiresAt])
+}
+
+model WebhookEvent {
+  id              String   @id @default(uuid())
+  provider        String   // 'stripe', etc.
+  eventType       String
+  eventId         String   @unique
+  payload         Json
+  processed       Boolean  @default(false)
+  rampSessionId   String?
+  errorMessage    String?  @db.Text
+  createdAt       DateTime @default(now())
+  processedAt     DateTime?
+
+  @@index([provider, eventType])
+  @@index([processed])
+  @@index([createdAt])
+}
+
+model PlatformApiKey {
+  id            String   @id @default(uuid())
+  name          String   // Label: "NeoExchange Main", "Partner ABC"
+  apiKey        String   @unique  // Public key shown to client
+  secretHash    String   // AES-256-GCM encrypted secret
+  status        PlatformApiKeyStatus @default(ACTIVE)
+  
+  // Rate limiting
+  rateLimitDay  Int      @default(10000)
+  dailyCalls    Int      @default(0)
+  totalCalls    Int      @default(0)
+  lastResetAt   DateTime @default(now())
+  
+  // Metadata
+  description   String?  @db.Text
+  allowedIps    String?  @db.Text  // Comma-separated IPs for IP whitelisting
+  metadata      Json?    // Additional metadata
+  
+  createdBy     String?  // Admin user who created it
+  createdAt     DateTime @default(now())
+  lastUsedAt    DateTime?
+  revokedAt     DateTime?
+  revokedBy     String?
+
+  @@index([apiKey])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum PlatformApiKeyStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}

@@ -1,0 +1,57 @@
+{
+  "summary": "Iteration 32 - Market Maker Treasury Tests. All 16 backend API tests passed. Frontend UI verified with MM pricing strip, bid/ask/spread/treasury/model display, and crypto off-ramp with USDT/USDC selector.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_market_maker_treasury_iteration32.py",
+    "/app/test_reports/pytest/pytest_results_iteration32.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_market_maker_treasury_iteration32.py"
+  ],
+  "success_rate": {
+    "backend": "100% (16/16 passed)",
+    "frontend": "100% - All MM UI elements verified"
+  },
+  "test_credentials": {
+    "admin": "admin@neonobleramp.com / Admin1234!",
+    "treasury_owner": "massimo.fornara.2212@gmail.com (TREASURY_USER_ID=de9a3781-b9d2-4b37-922d-2f6959e0f529)"
+  },
+  "seed_data_creation": "None - used existing data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Market Maker Treasury integration complete. Treasury = Massimo's account. All MM endpoints working: /api/market-maker/pricing (PUBLIC), /api/market-maker/treasury (AUTH), /api/market-maker/pnl (AUTH), /api/market-maker/risk (AUTH). NENO Exchange endpoints updated with MM: /api/neno-exchange/price, /api/neno-exchange/quote, /api/neno-exchange/market, /api/neno-exchange/buy, /api/neno-exchange/sell. Crypto off-ramp correctly fails with 'insufficiente' message when USDT/USDC balance is 0. Frontend shows MM pricing strip with BID, ASK, SPREAD, SKEW, TREASURY, MODEL=Market Maker.",
+  "backend_tests_summary": {
+    "test_01_mm_pricing_public": "PASSED - Returns bid, ask, mid_price, spread_bps, treasury_neno=397, treasury_owner=massimo email, inventory_ratio, inventory_skew",
+    "test_02_mm_treasury_full": "PASSED - Returns owner=massimo email, assets with internal_balance+onchain_balance, NENO ~397 onchain, EUR ~29640 internal",
+    "test_03_mm_treasury_neno_asset": "PASSED - Returns NENO with amount=397, onchain_balance=397, internal_balance=0",
+    "test_04_mm_treasury_eur_asset": "PASSED - Returns EUR with amount=~29640, internal_balance=~29640",
+    "test_05_mm_pnl_report": "PASSED - Returns treasury_owner=massimo email, trade data",
+    "test_06_mm_risk_dashboard": "PASSED - Returns treasury_owner=massimo email, risk_level, inventory metrics",
+    "test_07_neno_exchange_price": "PASSED - Returns bid/ask/spread/mid_price/pricing_model=market_maker_bid_ask",
+    "test_08_neno_exchange_quote_buy": "PASSED - Uses ask price, shows mm_bid, mm_ask, mm_spread_bps, mm_mid_price",
+    "test_09_neno_exchange_quote_sell": "PASSED - Uses bid price",
+    "test_10_neno_exchange_market": "PASSED - Returns bid/ask/spread/treasury_neno/pricing_model=market_maker",
+    "test_11_buy_neno_updates_treasury_eur": "PASSED - Buy trade INCREASES Massimo's EUR balance (Treasury receives EUR)",
+    "test_12_sell_neno_updates_treasury_eur": "PASSED - Sell trade DECREASES Massimo's EUR balance (Treasury pays EUR)",
+    "test_13_crypto_offramp_insufficient_usdt": "PASSED - Returns 500 with 'insufficiente' message",
+    "test_14_crypto_offramp_usdc_also_fails": "PASSED - Returns 500 with insufficient balance message",
+    "test_15_treasury_usdt_balance": "PASSED - Shows 0 USDT balance (explains crypto off-ramp failure)",
+    "test_16_treasury_bnb_balance": "PASSED - Shows BNB balance"
+  },
+  "frontend_tests_summary": {
+    "mm_pricing_strip": "VERIFIED - Shows BID 9,815.16, ASK 9,984.82, SPREAD 169.7 bps, SKEW -1.65%, TREASURY 397.0, MODEL Market Maker",
+    "tabs": "VERIFIED - All tabs present: Compra, Vendi, Swap, Deposita, Off-Ramp, Crea Token",
+    "buy_quote": "VERIFIED - Shows Prezzo NENO (Ask) EUR 9,984.82, Mid Price EUR 9,999.99, Spread 169.7 bps",
+    "offramp_crypto": "VERIFIED - Crypto destination button, wallet input, USDT/USDC selector buttons, info message present"
+  }
+}

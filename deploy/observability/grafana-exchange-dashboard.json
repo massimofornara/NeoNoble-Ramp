@@ -1,0 +1,41 @@
+{
+  "title": "NeoNoble Exchange Core",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Internal swaps settled",
+      "targets": [{ "expr": "sum(exchange_swaps_total{result=\"settled\"})" }],
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Risk blocks",
+      "targets": [{ "expr": "sum(exchange_risk_events_total{blocked=\"true\"})" }],
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Settlement latency p95",
+      "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(exchange_settlement_latency_seconds_bucket[5m])) by (le))" }],
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Transak conversion sessions",
+      "targets": [{ "expr": "sum(rate(transak_widget_sessions_total[5m])) by (product)" }],
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Transaction pipeline health",
+      "targets": [
+        { "expr": "sum(rate(exchange_swaps_total[5m])) by (result)" },
+        { "expr": "sum(rate(transak_webhook_events_total[5m])) by (result)" }
+      ],
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 }
+    }
+  ]
+}

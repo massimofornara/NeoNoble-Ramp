@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": "user-eu-1",
+      "name": "Primary User",
+      "kycTier": "enhanced",
+      "jurisdiction": "EU",
+      "clusterId": "cluster-primary"
+    },
+    {
+      "id": "issuer-1",
+      "name": "Primary Issuer",
+      "kycTier": "institutional",
+      "jurisdiction": "EU",
+      "clusterId": "cluster-issuer"
+    }
+  ],
+  "assets": ["EUR", "USD", "USDT", "BTC", "ETH", "SOL"]
+}

@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+motor
+pydantic
+python-dotenv
+web3
+ccxt
+aiohttp
+pytest
+pytest-asyncio
+pytest-cov

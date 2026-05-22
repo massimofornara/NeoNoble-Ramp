@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Chart.Name }}-core
+spec:
+  minAvailable: 4
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-core

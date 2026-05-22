@@ -1,0 +1,118 @@
+{
+  "summary": "Iteration 37 - Cashout Engine (Autonomous Profit Extraction) Testing Complete. All 24 backend tests passed. Frontend Admin Dashboard Cashout Engine tab verified with engine status, EUR accounts (IT+BE), SEPA routing rules, and comprehensive report.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration37_cashout_engine.py",
+    "/app/test_reports/pytest/pytest_results_iteration37.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_iteration37_cashout_engine.py"
+  ],
+  "success_rate": {
+    "backend": "100% (24/24 passed)",
+    "frontend": "100% - All UI elements verified"
+  },
+  "test_credentials": {
+    "admin": "admin@neonobleramp.com / Admin1234!"
+  },
+  "seed_data_creation": "None - using existing data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Cashout Engine fully tested. All endpoints working correctly. (1) GET /api/cashout/status returns running=true, cycle_count>=1, cumulative extraction metrics (extracted_usdc, extracted_eur, cashouts_executed, cashouts_blocked), EUR accounts (IT+BE with correct IBANs/BICs), SEPA routing thresholds (instant_max=5000, standard_max=100000). (2) GET /api/cashout/report returns comprehensive report with engine status, USDC wallets (client/treasury/revenue all 0.000000), hot wallet (NENO=396.9888, BNB=0.00483), conversion_opportunities=1. (3) GET /api/cashout/history returns cashout operation history. (4) GET /api/cashout/eur-accounts returns IT (IBAN IT80V1810301600068254758246, BIC FNOMITM2) and BE (IBAN BE06967614820722, BIC TRWIBEB1XXX) accounts with routing rules. (5) GET /api/cashout/conversions/opportunities returns 1 NENO→USDC opportunity. (6) GET /api/cashout/conversions/history returns conversion history. (7) GET /api/cashout/conversions/summary returns conversion summary by pair. (8) POST /api/cashout/start/stop controls engine (admin only). (9) All endpoints require Bearer token auth (401 without). (10) Circle USDC endpoints still working. (11) Auto-op loop still running. Frontend Admin Dashboard has 8 tabs, Cashout Engine tab shows ACTIVE badge, cycle count, EUR accounts with IBANs, SEPA routing rules, and report with hot wallet balances.",
+  "backend_tests_summary": {
+    "test_01_health_check": "PASSED - Returns status=healthy, service=NeoNoble Ramp",
+    "test_02_admin_login": "PASSED - Admin login successful",
+    "test_03_cashout_status": "PASSED - Returns running, cycle_count, cumulative metrics, EUR accounts, SEPA routing",
+    "test_04_cashout_status_engine_running": "PASSED - Engine running with cycle_count >= 1",
+    "test_05_cashout_report": "PASSED - Returns engine status, USDC wallets, hot wallet, conversion opportunities",
+    "test_06_cashout_history": "PASSED - Returns cashouts list with count",
+    "test_07_eur_accounts": "PASSED - Returns IT and BE accounts with correct IBANs/BICs and routing rules",
+    "test_08_conversion_opportunities": "PASSED - Returns hot wallet status and opportunities list",
+    "test_09_conversion_history": "PASSED - Returns conversions list with count",
+    "test_10_conversion_summary": "PASSED - Returns conversion_pairs, priority_order, max_slippage_pct",
+    "test_11_stop_engine": "PASSED - Returns status=stopped",
+    "test_12_start_engine": "PASSED - Returns status=started",
+    "test_13_verify_engine_running_after_restart": "PASSED - Engine running after restart",
+    "test_14_cashout_status_requires_auth": "PASSED - Returns 401 without auth",
+    "test_15_cashout_report_requires_auth": "PASSED - Returns 401 without auth",
+    "test_16_cashout_history_requires_auth": "PASSED - Returns 401 without auth",
+    "test_17_eur_accounts_requires_auth": "PASSED - Returns 401 without auth",
+    "test_18_conversions_opportunities_requires_auth": "PASSED - Returns 401 without auth",
+    "test_19_start_requires_auth": "PASSED - Returns 401 without auth",
+    "test_20_stop_requires_auth": "PASSED - Returns 401 without auth",
+    "test_21_circle_wallets_balances": "PASSED - Circle USDC wallets still working",
+    "test_22_circle_auto_op_status": "PASSED - Auto-op loop still running",
+    "test_23_hot_wallet_has_neno": "PASSED - Hot wallet available with NENO balance",
+    "test_24_conversion_opportunity_for_neno": "PASSED - NENO→USDC conversion opportunity found"
+  },
+  "frontend_tests_summary": {
+    "admin_dashboard": "VERIFIED - Admin Command Center title, NeoNoble Ramp — IPO-Ready Fintech Platform subtitle",
+    "tabs": "VERIFIED - All 8 tabs present: Overview, Cashout Engine, Circle USDC, Real vs Virtual, Treasury & Risk, IPO Structure, Banking Rails, Execution Logs",
+    "cashout_tab": "VERIFIED - data-testid='tab-cashout' clickable and shows Cashout Engine content",
+    "cashout_engine_panel": "VERIFIED - data-testid='cashout-engine-panel' shows 'Autonomous Profit Extraction Engine' with ACTIVE badge",
+    "engine_metrics": "VERIFIED - Shows 1 Cicli, 0.000000 USDC Estratti, 0.00 EUR Estratti, 0 Cashout Eseguiti",
+    "engine_config": "VERIFIED - Intervallo: 90s, Buffer TREASURY: 10%, Min USDC: 0.5, Min EUR: 1",
+    "eur_accounts_panel": "VERIFIED - data-testid='eur-accounts-panel' shows 'Conti EUR (SEPA/SWIFT)'",
+    "it_account": "VERIFIED - IT: IT80V1810301600068254758246, BIC: FNOMITM2, Massimo Fornara",
+    "be_account": "VERIFIED - BE: BE06967614820722, BIC: TRWIBEB1XXX, Massimo Fornara",
+    "sepa_routing": "VERIFIED - SEPA Instant (< 5,000 EUR), SEPA Standard (5k — 100k EUR), SWIFT (> 100k EUR)",
+    "cashout_report_panel": "VERIFIED - data-testid='cashout-report-panel' shows Report Completo",
+    "report_metrics": "VERIFIED - 0.000000 USDC On-Chain, 396.9888 NENO Hot Wallet, 0.004830 BNB Hot Wallet, 1 Conversioni Disponibili",
+    "usdc_wallets": "VERIFIED - CLIENT (0.000000 USDC), TREASURY (0.000000 USDC), REVENUE (0.000000 USDC)"
+  },
+  "features_verified": {
+    "cashout_status_api": "✓ GET /api/cashout/status - engine status with metrics, EUR accounts, SEPA routing",
+    "cashout_report_api": "✓ GET /api/cashout/report - comprehensive report with USDC wallets, hot wallet, conversions",
+    "cashout_history_api": "✓ GET /api/cashout/history - cashout operation history",
+    "eur_accounts_api": "✓ GET /api/cashout/eur-accounts - IT and BE accounts with routing rules",
+    "conversions_opportunities_api": "✓ GET /api/cashout/conversions/opportunities - crypto→USDC opportunities",
+    "conversions_history_api": "✓ GET /api/cashout/conversions/history - conversion history",
+    "conversions_summary_api": "✓ GET /api/cashout/conversions/summary - conversion summary by pair",
+    "start_engine_api": "✓ POST /api/cashout/start - start engine (admin only)",
+    "stop_engine_api": "✓ POST /api/cashout/stop - stop engine (admin only)",
+    "auth_required": "✓ All cashout endpoints require Bearer token auth",
+    "circle_wallets_api": "✓ GET /api/circle/wallets/balances - still working",
+    "circle_auto_op_api": "✓ GET /api/circle/auto-op/status - still running",
+    "health_api": "✓ GET /api/health - basic health check",
+    "frontend_cashout_tab": "✓ Admin Dashboard Cashout Engine tab with all panels"
+  },
+  "eur_accounts_verified": {
+    "IT": {
+      "iban": "IT80V1810301600068254758246",
+      "bic": "FNOMITM2",
+      "beneficiary": "Massimo Fornara"
+    },
+    "BE": {
+      "iban": "BE06967614820722",
+      "bic": "TRWIBEB1XXX",
+      "beneficiary": "Massimo Fornara"
+    }
+  },
+  "sepa_routing_verified": {
+    "sepa_instant": "< 5,000 EUR",
+    "sepa_standard": "5,000 — 100,000 EUR",
+    "swift": "> 100,000 EUR (uses BE account)"
+  },
+  "hot_wallet_balances": {
+    "neno": "396.9888",
+    "bnb": "0.00483015",
+    "conversion_opportunities": 1
+  },
+  "notes": {
+    "engine_status": "Cashout Engine is ACTIVE and running with cycle_count >= 1",
+    "on_chain_verification": "All wallet balances are REAL on-chain verified via BSC RPC",
+    "usdc_wallets": "Currently 0.000000 USDC in all wallets (client, treasury, revenue)",
+    "no_mocked_apis": "All Cashout Engine operations are real - no simulation or mocking",
+    "eur_payouts": "EUR SEPA/SWIFT payouts are configured but execute only when real funds are available"
+  }
+}

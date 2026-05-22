@@ -1,0 +1,105 @@
+{
+  "summary": "Iteration 28 - Balance Sync Bug Fix VERIFIED. All 14 backend tests passed (10 initially + 4 after rate limit cooldown). Critical bug fix confirmed: sell/swap/offramp endpoints now correctly DEBIT NENO from internal balance. Frontend verified: NenoExchange page loads with balance display, all 6 tabs functional, Dashboard shows 'I Miei Token Personalizzati' section and 'Crea Token Personalizzato' button.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration28_balance_sync_bugfix.py",
+    "/app/test_reports/pytest/pytest_results_iteration28.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BUG FIX VERIFIED: sell endpoint (lines 357-368) now always debits NENO regardless of tx_hash presence",
+    "BUG FIX VERIFIED: swap endpoint (lines 440-447) now always debits from_asset regardless of tx_hash presence",
+    "BUG FIX VERIFIED: offramp endpoint (lines 804-808) now always debits NENO regardless of tx_hash presence",
+    "Balance persistence confirmed: after sell/swap/offramp, refetched balances match expected values",
+    "Insufficient balance errors (400) correctly returned for all three endpoints",
+    "Frontend 5s polling (lines 148-160) working for real-time balance sync",
+    "Immediate balance update from response (line 282) working correctly"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration28_balance_sync_bugfix.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 tests passed)",
+    "frontend": "100% (All UI elements verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@neonobleramp.com / Admin1234!"
+  },
+  "seed_data_creation": "Created test tokens during regression tests (T*, B*, S* symbols)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 28 verified the critical balance sync bug fix. The fix removed 'if not onchain_tx' guards around debit operations in sell/swap/offramp endpoints. Now NENO is always debited from internal wallet, which is correct because verify-deposit already credits NENO when on-chain tx is received. Rate limiting is active (429 after ~10 rapid requests). NENO balance shown: 9927.3680.",
+  "features_tested": {
+    "bug_fix_sell": {
+      "POST /api/neno-exchange/sell": "PASS - NENO debited, EUR credited",
+      "Sell insufficient balance": "PASS - Returns 400 'Saldo NENO insufficiente'"
+    },
+    "bug_fix_swap": {
+      "POST /api/neno-exchange/swap (NENO→ETH)": "PASS - NENO debited, ETH credited",
+      "Swap insufficient balance": "PASS - Returns 400 'Saldo X insufficiente'"
+    },
+    "bug_fix_offramp": {
+      "POST /api/neno-exchange/offramp": "PASS - NENO debited, neno_balance in response decreased",
+      "Offramp insufficient balance": "PASS - Returns 400 'Saldo NENO insufficiente'"
+    },
+    "balance_persistence": {
+      "Sell balance persists after refetch": "PASS",
+      "Swap balance persists after refetch": "PASS",
+      "Offramp balance persists after refetch": "PASS"
+    },
+    "regression_tests": {
+      "POST /api/neno-exchange/buy": "PASS - Buy NENO with EUR still works",
+      "POST /api/neno-exchange/create-token": "PASS - Create custom token still works",
+      "GET /api/neno-exchange/live-balances": "PASS - Returns up-to-date balances",
+      "POST /api/neno-exchange/buy-custom-token": "PASS - Buy custom token still works",
+      "POST /api/neno-exchange/sell-custom-token": "PASS - Sell custom token still works"
+    },
+    "frontend_neno_exchange": {
+      "Page loads at /neno-exchange": "PASS",
+      "Balance section displays NENO balance": "PASS - Shows 9927.3680",
+      "Tab buy": "PASS - Asset select, amount input, buy button, quote info",
+      "Tab sell": "PASS - Sell button found",
+      "Tab swap": "PASS - From/To selects, swap button",
+      "Tab deposit": "PASS",
+      "Tab offramp": "PASS - Amount input, offramp button",
+      "Tab create": "PASS"
+    },
+    "frontend_dashboard": {
+      "I Miei Token Personalizzati section": "PASS",
+      "Crea Token Personalizzato button": "PASS",
+      "Token Market button": "PASS",
+      "Live Prices widget": "PASS - Shows NENO at €10,000"
+    }
+  },
+  "api_endpoints_verified": [
+    "POST /api/auth/login",
+    "POST /api/wallet/deposit",
+    "GET /api/wallet/balances",
+    "POST /api/neno-exchange/sell",
+    "POST /api/neno-exchange/swap",
+    "POST /api/neno-exchange/offramp",
+    "POST /api/neno-exchange/buy",
+    "POST /api/neno-exchange/create-token",
+    "GET /api/neno-exchange/live-balances",
+    "POST /api/neno-exchange/buy-custom-token",
+    "POST /api/neno-exchange/sell-custom-token"
+  ],
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "All balance operations are REAL MongoDB operations"
+  },
+  "rca_of_the_issue": {
+    "root_cause": "The sell/swap/offramp endpoints had an 'if not onchain_tx:' guard around the _debit() calls. When tx_hash was provided (on-chain transactions), the debit was skipped. But verify-deposit already credits NENO to internal wallet when on-chain tx is received, so the debit must ALWAYS happen.",
+    "fix_applied": "Removed the 'if not onchain_tx:' guard around debit operations in sell (line 367), swap (line 446), and offramp (line 807) endpoints. Now NENO is always debited from internal wallet.",
+    "verification": "All 14 tests passed confirming: (1) NENO is debited on sell/swap/offramp, (2) receive_asset is credited, (3) balance changes persist after refetch, (4) insufficient balance returns 400 error"
+  }
+}

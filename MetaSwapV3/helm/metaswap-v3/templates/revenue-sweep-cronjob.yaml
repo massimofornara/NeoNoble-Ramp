@@ -1,0 +1,49 @@
+{{- if .Values.revenueSweep.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Chart.Name }}-revenue-sweep
+spec:
+  schedule: {{ .Values.revenueSweep.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.revenueSweep.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.revenueSweep.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.revenueSweep.backoffLimit }}
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: sweep
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: ADMIN_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: metaswap-production-secrets
+                      key: ADMIN_API_KEY
+                - name: METASWAP_CORE_URL
+                  value: "http://{{ .Chart.Name }}-core:{{ .Values.service.port }}"
+              command:
+                - node
+                - -e
+                - |
+                  const controller = new AbortController();
+                  const timer = setTimeout(() => controller.abort(), {{ .Values.revenueSweep.timeoutSeconds }}000);
+                  const response = await fetch(`${process.env.METASWAP_CORE_URL}/revenue/distribution/sweep`, {
+                    method: "POST",
+                    headers: {
+                      "content-type": "application/json",
+                      "x-admin-api-key": process.env.ADMIN_API_KEY
+                    },
+                    body: "{}",
+                    signal: controller.signal
+                  });
+                  clearTimeout(timer);
+                  const body = await response.text();
+                  console.log(body);
+                  if (!response.ok) process.exit(1);
+                  process.exit(0);
+{{- end }}

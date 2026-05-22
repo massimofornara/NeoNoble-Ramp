@@ -1,0 +1,25 @@
+groups:
+  - name: metaswap-core
+    rules:
+      - alert: MetaSwapNoRevenueCaptured
+        expr: metaswap_revenue_captured_usd == 0
+        for: 6h
+        labels:
+          severity: warning
+        annotations:
+          summary: No captured revenue for 6 hours
+          description: Activate paid API pilots, issuer onboarding, or verify fee capture paths.
+      - alert: MetaSwapWebhookBacklog
+        expr: metaswap_webhook_deliveries_queued > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Webhook delivery queue is growing
+      - alert: MetaSwapRevenueTargetGapHigh
+        expr: metaswap_revenue_target_gap_usd > 900000
+        for: 24h
+        labels:
+          severity: info
+        annotations:
+          summary: Revenue target gap remains high

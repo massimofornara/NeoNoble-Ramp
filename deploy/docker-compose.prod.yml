@@ -1,0 +1,24 @@
+# NeoNoble Ramp
+
+![CI](https://github.com/Fordeveloper25/NeoNoble-Ramp/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![Coverage](https://img.shields.io/badge/tests-pytest-green)
+
+NeoNoble Ramp è una piattaforma crypto/fintech con:
+
+- exchange interno per NENO e token custom
+- routing multi-venue
+- buy / sell / swap
+- wallet on-chain
+- settlement e payout
+- test automatici e CI
+
+## Setup locale
+
+```bash
+git clone https://github.com/Fordeveloper25/NeoNoble-Ramp.git
+cd NeoNoble-Ramp
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pytest --cov=backend

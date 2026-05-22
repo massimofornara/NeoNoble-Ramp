@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: metaswap-core
+  namespace: metaswap
+spec:
+  minAvailable: 4
+  selector:
+    matchLabels:
+      app: metaswap-core

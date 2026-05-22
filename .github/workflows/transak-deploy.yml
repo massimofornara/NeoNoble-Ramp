@@ -1,0 +1,85 @@
+name: Transak Ramp CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+
+concurrency:
+  group: transak-ramp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+          cache: npm
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Verify exchange migrations exist
+        run: test -f db/migrations/20260521_exchange_core.sql
+      - name: Docker build
+        run: docker build -t neonoble-ramp:${{ github.sha }} .
+
+  deploy-staging:
+    if: github.ref == 'refs/heads/staging' || github.event.inputs.environment == 'staging'
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_STAGING }}" > ~/.kube/config
+      - name: Blue green deploy staging
+        run: |
+          helm upgrade --install neonoble-ramp ./deploy/helm/neonoble-ramp \
+            --namespace neonoble-ramp --create-namespace \
+            --set image.repository=${{ secrets.CONTAINER_REGISTRY }}/neonoble-ramp \
+            --set image.tag=${{ github.sha }} \
+            --set host=staging.neonoble.io \
+            --set environment=staging
+          kubectl -n neonoble-ramp rollout status deployment/neonoble-ramp --timeout=180s
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" > ~/.kube/config
+      - name: Production deploy
+        run: |
+          helm upgrade --install neonoble-ramp ./deploy/helm/neonoble-ramp \
+            --namespace neonoble-ramp --create-namespace \
+            --set image.repository=${{ secrets.CONTAINER_REGISTRY }}/neonoble-ramp \
+            --set image.tag=${{ github.sha }} \
+            --set host=app.neonoble.io \
+            --set environment=production
+          kubectl -n neonoble-ramp rollout status deployment/neonoble-ramp --timeout=180s
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          helm rollback neonoble-ramp --namespace neonoble-ramp

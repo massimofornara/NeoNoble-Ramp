@@ -1,0 +1,511 @@
+{
+  "passed": 20,
+  "failed": 8,
+  "errors": [
+    "offramp_card_1_0.001: Carta non trovata",
+    "offramp_card_2_0.0015: Carta non trovata",
+    "offramp_card_3_0.002: Carta non trovata",
+    "offramp_card_4_0.0025: Carta non trovata",
+    "offramp_card_5_0.003: Carta non trovata",
+    "offramp_crypto_1: Off-ramp crypto fallito: Treasury USDT/USDC insufficiente: necessario 10.64173, disponibile 0.0/0.0",
+    "offramp_crypto_2: Off-ramp crypto fallito: Treasury USDC/USDT insufficiente: necessario 10.64173, disponibile 0.0/0.0",
+    "offramp_crypto_3: Off-ramp crypto fallito: Treasury USDT/USDC insufficiente: necessario 10.64173, disponibile 0.0/0.0"
+  ],
+  "trades": [
+    {
+      "test": "sell_1_neno_0.001",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.001
+      },
+      "status": 200,
+      "duration_ms": 7190.5,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.1848
+      },
+      "message": "Venduti 0.001 NENO per 9.78571452 EUR"
+    },
+    {
+      "test": "sell_2_neno_0.0015",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.0015
+      },
+      "status": 200,
+      "duration_ms": 8863.0,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.2772
+      },
+      "message": "Venduti 0.0015 NENO per 14.67857178 EUR"
+    },
+    {
+      "test": "sell_3_neno_0.002",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.002
+      },
+      "status": 200,
+      "duration_ms": 6934.5,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.3697
+      },
+      "message": "Venduti 0.002 NENO per 19.57142904 EUR"
+    },
+    {
+      "test": "sell_4_neno_0.0025",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.0025
+      },
+      "status": 200,
+      "duration_ms": 6961.0,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.4621
+      },
+      "message": "Venduti 0.0025 NENO per 24.4642863 EUR"
+    },
+    {
+      "test": "sell_5_neno_0.003",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.003
+      },
+      "status": 200,
+      "duration_ms": 8985.2,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.5545
+      },
+      "message": "Venduti 0.003 NENO per 29.35714356 EUR"
+    },
+    {
+      "test": "sell_6_neno_0.0035",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.0035
+      },
+      "status": 200,
+      "duration_ms": 6979.7,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.6469
+      },
+      "message": "Venduti 0.0035 NENO per 34.25000082 EUR"
+    },
+    {
+      "test": "sell_7_neno_0.004",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.004
+      },
+      "status": 200,
+      "duration_ms": 4899.7,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.7393
+      },
+      "message": "Venduti 0.004 NENO per 39.14285808 EUR"
+    },
+    {
+      "test": "sell_8_neno_0.0045",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.0045
+      },
+      "status": 200,
+      "duration_ms": 809.4,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.8317
+      },
+      "message": "Venduti 0.0045 NENO per 44.03571534 EUR"
+    },
+    {
+      "test": "sell_9_neno_0.005",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.005
+      },
+      "status": 200,
+      "duration_ms": 6676.3,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 0.9241
+      },
+      "message": "Venduti 0.005 NENO per 48.9285726 EUR"
+    },
+    {
+      "test": "sell_10_neno_0.0055",
+      "endpoint": "sell",
+      "payload": {
+        "receive_asset": "EUR",
+        "neno_amount": 0.0055
+      },
+      "status": 200,
+      "duration_ms": 9010.9,
+      "success": true,
+      "mm_info": {
+        "price_type": "bid",
+        "effective_price": 9815.16,
+        "mid_price": 9999.99,
+        "spread_bps": 169.7,
+        "matched_internal": false,
+        "spread_revenue": 1.0166
+      },
+      "message": "Venduti 0.0055 NENO per 53.82142986 EUR"
+    },
+    {
+      "test": "swap_1_NENO_to_EUR_0.001",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "NENO",
+        "to_asset": "EUR",
+        "amount": 0.001
+      },
+      "status": 200,
+      "duration_ms": 6996.8,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 0.001 NENO per 9.78571452 EUR"
+    },
+    {
+      "test": "swap_2_NENO_to_ETH_0.001",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "NENO",
+        "to_asset": "ETH",
+        "amount": 0.001
+      },
+      "status": 200,
+      "duration_ms": 4938.9,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 0.001 NENO per 0.00553178 ETH"
+    },
+    {
+      "test": "swap_3_NENO_to_BTC_0.001",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "NENO",
+        "to_asset": "BTC",
+        "amount": 0.001
+      },
+      "status": 200,
+      "duration_ms": 6688.8,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 0.001 NENO per 0.00016098 BTC"
+    },
+    {
+      "test": "swap_4_EUR_to_NENO_5.0",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "EUR",
+        "to_asset": "NENO",
+        "amount": 5.0
+      },
+      "status": 200,
+      "duration_ms": 6946.3,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 5.0 EUR per 0.00049926 NENO"
+    },
+    {
+      "test": "swap_5_EUR_to_ETH_10.0",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "EUR",
+        "to_asset": "ETH",
+        "amount": 10.0
+      },
+      "status": 200,
+      "duration_ms": 9022.9,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 10.0 EUR per 0.00563595 ETH"
+    },
+    {
+      "test": "swap_6_EUR_to_BTC_50.0",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "EUR",
+        "to_asset": "BTC",
+        "amount": 50.0
+      },
+      "status": 200,
+      "duration_ms": 6968.3,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 50.0 EUR per 0.00082008 BTC"
+    },
+    {
+      "test": "swap_7_EUR_to_NENO_2.0",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "EUR",
+        "to_asset": "NENO",
+        "amount": 2.0
+      },
+      "status": 200,
+      "duration_ms": 2844.6,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 2.0 EUR per 0.0001997 NENO"
+    },
+    {
+      "test": "swap_8_ETH_to_NENO_0.0001",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "ETH",
+        "to_asset": "NENO",
+        "amount": 0.0001
+      },
+      "status": 200,
+      "duration_ms": 7000.6,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 0.0001 ETH per 1.766e-05 NENO"
+    },
+    {
+      "test": "swap_9_ETH_to_EUR_0.0001",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "ETH",
+        "to_asset": "EUR",
+        "amount": 0.0001
+      },
+      "status": 200,
+      "duration_ms": 4903.2,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 0.0001 ETH per 0.1763693 EUR"
+    },
+    {
+      "test": "swap_10_BTC_to_EUR_1e-05",
+      "endpoint": "swap",
+      "payload": {
+        "from_asset": "BTC",
+        "to_asset": "EUR",
+        "amount": 1e-05
+      },
+      "status": 200,
+      "duration_ms": 6684.1,
+      "success": true,
+      "mm_info": {
+        "bid": 9815.16,
+        "ask": 9984.82,
+        "spread_bps": 169.7
+      },
+      "message": "Swappati 1e-05 BTC per 0.60604639 EUR"
+    },
+    {
+      "test": "offramp_card_1_0.001",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.001,
+        "destination": "card",
+        "card_id": "dummy-card"
+      },
+      "status": 404,
+      "duration_ms": 4573.0,
+      "success": false,
+      "mm_info": {},
+      "message": "Carta non trovata"
+    },
+    {
+      "test": "offramp_card_2_0.0015",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.0015,
+        "destination": "card",
+        "card_id": "dummy-card"
+      },
+      "status": 404,
+      "duration_ms": 2274.6,
+      "success": false,
+      "mm_info": {},
+      "message": "Carta non trovata"
+    },
+    {
+      "test": "offramp_card_3_0.002",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.002,
+        "destination": "card",
+        "card_id": "dummy-card"
+      },
+      "status": 404,
+      "duration_ms": 4313.0,
+      "success": false,
+      "mm_info": {},
+      "message": "Carta non trovata"
+    },
+    {
+      "test": "offramp_card_4_0.0025",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.0025,
+        "destination": "card",
+        "card_id": "dummy-card"
+      },
+      "status": 404,
+      "duration_ms": 4404.8,
+      "success": false,
+      "mm_info": {},
+      "message": "Carta non trovata"
+    },
+    {
+      "test": "offramp_card_5_0.003",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.003,
+        "destination": "card",
+        "card_id": "dummy-card"
+      },
+      "status": 404,
+      "duration_ms": 2266.8,
+      "success": false,
+      "mm_info": {},
+      "message": "Carta non trovata"
+    },
+    {
+      "test": "offramp_crypto_1",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.001,
+        "destination": "crypto",
+        "destination_wallet": "0x1234567890123456789012345678901234567890",
+        "preferred_stable": "USDT"
+      },
+      "status": 500,
+      "duration_ms": 8809.0,
+      "success": false,
+      "mm_info": {},
+      "message": "Off-ramp crypto fallito: Treasury USDT/USDC insufficiente: necessario 10.64173, disponibile 0.0/0.0"
+    },
+    {
+      "test": "offramp_crypto_2",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.001,
+        "destination": "crypto",
+        "destination_wallet": "0x1234567890123456789012345678901234567890",
+        "preferred_stable": "USDC"
+      },
+      "status": 500,
+      "duration_ms": 7000.4,
+      "success": false,
+      "mm_info": {},
+      "message": "Off-ramp crypto fallito: Treasury USDC/USDT insufficiente: necessario 10.64173, disponibile 0.0/0.0"
+    },
+    {
+      "test": "offramp_crypto_3",
+      "endpoint": "offramp",
+      "payload": {
+        "neno_amount": 0.001,
+        "destination": "crypto",
+        "destination_wallet": "0x1234567890123456789012345678901234567890",
+        "preferred_stable": "USDT"
+      },
+      "status": 500,
+      "duration_ms": 4912.1,
+      "success": false,
+      "mm_info": {},
+      "message": "Off-ramp crypto fallito: Treasury USDT/USDC insufficiente: necessario 10.64173, disponibile 0.0/0.0"
+    }
+  ]
+}

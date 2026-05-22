@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-core
+spec:
+  selector:
+    app: {{ .Chart.Name }}-core
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8080

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: metaswap-v3
+description: MetaSwap V3 regulated exchange core
+type: application
+version: 1.0.6
+appVersion: "1.0.6"

@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: neonoble-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-neonoble}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-neonoble123}
+      POSTGRES_DB: ${POSTGRES_DB:-neonoble_ramp}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neonoble"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - neonoble-net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: neonoble-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+      - NEONOBLE_PLATFORM_API_KEY=${NEONOBLE_PLATFORM_API_KEY}
+      - NEONOBLE_PLATFORM_API_SECRET=${NEONOBLE_PLATFORM_API_SECRET}
+      - PAYMENT_MODE=${PAYMENT_MODE:-mock}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - BSC_RPC_URL=${BSC_RPC_URL}
+      - BSC_PRIVATE_KEY=${BSC_PRIVATE_KEY}
+      - NENO_CONTRACT_ADDRESS=${NENO_CONTRACT_ADDRESS}
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    networks:
+      - neonoble-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    container_name: neonoble-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BSC_RPC_URL=${BSC_RPC_URL}
+      - BSC_PRIVATE_KEY=${BSC_PRIVATE_KEY}
+      - NENO_CONTRACT_ADDRESS=${NENO_CONTRACT_ADDRESS}
+      - BSC_CONFIRMATIONS=${BSC_CONFIRMATIONS:-12}
+      - WORKER_ENABLED=true
+      - WORKER_INTERVAL_MS=${WORKER_INTERVAL_MS:-5000}
+    networks:
+      - neonoble-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  reconciler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: reconciler
+    container_name: neonoble-reconciler
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BSC_RPC_URL=${BSC_RPC_URL}
+      - BSC_PRIVATE_KEY=${BSC_PRIVATE_KEY}
+      - NENO_CONTRACT_ADDRESS=${NENO_CONTRACT_ADDRESS}
+      - PAYMENT_MODE=${PAYMENT_MODE:-mock}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - RECONCILE_INTERVAL_MS=${RECONCILE_INTERVAL_MS:-60000}
+    networks:
+      - neonoble-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  neonoble-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

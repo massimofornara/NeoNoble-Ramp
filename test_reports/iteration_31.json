@@ -1,0 +1,88 @@
+{
+  "summary": "Iteration 31 - Market Maker Implementation Tests Complete. All 17 backend tests passed (15 in main run + 2 after rate limit cooldown). Frontend verified with all Market Maker UI elements working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_market_maker_iteration31.py",
+    "/app/test_reports/pytest/pytest_results_iteration31.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_market_maker_iteration31.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "admin": "admin@neonobleramp.com / Admin1234!"
+  },
+  "seed_data_creation": "None - used existing admin account",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Market Maker implementation fully tested and working. Backend tests cover: MM pricing (public), NENO exchange price/market with MM, quote buy (uses ask), quote sell (uses bid), treasury inventory (auth required), PnL report (auth required), risk dashboard, order book, buy NENO with MM (treasury decreases), sell NENO with MM (treasury increases), PnL ledger tracking, crypto off-ramp fallback (correctly fails with insufficient USDT), treasury asset breakdown, swap quote with MM, swap execution with MM. Frontend verified: MM Pricing Strip shows BID/ASK/SPREAD/SKEW/TREASURY/MODEL, Buy quote shows Ask price + Mid Price + Spread, Off-Ramp Crypto tab shows wallet input + USDT/USDC selector.",
+  "tests_passed": [
+    "test_01_mm_pricing_public",
+    "test_02_neno_exchange_price_with_mm",
+    "test_03_neno_exchange_market_with_mm",
+    "test_04_quote_buy_uses_ask_price",
+    "test_05_quote_sell_uses_bid_price",
+    "test_06_mm_treasury_requires_auth",
+    "test_07_mm_pnl_requires_auth",
+    "test_08_mm_risk_dashboard",
+    "test_09_mm_order_book",
+    "test_10_buy_neno_with_mm",
+    "test_11_sell_neno_with_mm",
+    "test_12_pnl_ledger_after_trades",
+    "test_13_crypto_offramp_path",
+    "test_14_treasury_asset_breakdown",
+    "test_15_treasury_eur_inventory",
+    "test_16_swap_quote_with_mm",
+    "test_17_swap_execution_with_mm"
+  ],
+  "frontend_elements_verified": [
+    "MM Pricing Strip: BID=9,815.16, ASK=9,984.82, SPREAD=169.7bps, SKEW=-1.65%, TREASURY=397.0, MODEL=Market Maker",
+    "Header shows: Mid 9,999.99 | Bid 9,815.16 | Ask 9,984.82 | 170bps",
+    "Buy Tab: Quote shows Prezzo NENO (Ask) EUR 9,984.82, Mid Price EUR 9,999.99, Spread 169.7 bps (1.70%)",
+    "Off-Ramp Tab: Carta/Banca/Crypto destination buttons",
+    "Off-Ramp Crypto: Wallet Destinazione (BSC) input field",
+    "Off-Ramp Crypto: USDT/USDC selector buttons",
+    "Off-Ramp Crypto: Info message about receiving stablecoin on BSC",
+    "Off-Ramp Crypto: Quote shows Valore lordo (Bid), Fee, Spread, Ricevi"
+  ],
+  "market_maker_features_verified": {
+    "pricing_endpoint": "GET /api/market-maker/pricing returns bid, ask, mid_price, spread_bps, inventory_skew, treasury_neno",
+    "treasury_endpoint": "GET /api/market-maker/treasury returns assets with available/locked breakdown (auth required)",
+    "pnl_endpoint": "GET /api/market-maker/pnl returns spread_revenue, fee_revenue, total_revenue, trade_count (auth required)",
+    "risk_endpoint": "GET /api/market-maker/risk returns risk_level, neno_inventory, target_inventory, inventory_ratio (auth required)",
+    "order_book_endpoint": "GET /api/market-maker/order-book returns pending orders (auth required)",
+    "neno_price_integration": "GET /api/neno-exchange/price returns pricing_model=market_maker_bid_ask with bid/ask/spread",
+    "neno_market_integration": "GET /api/neno-exchange/market returns pricing_model=market_maker with inventory_skew/treasury_neno",
+    "quote_buy_integration": "GET /api/neno-exchange/quote?direction=buy uses ask price, includes mm_bid/mm_ask/mm_spread_bps",
+    "quote_sell_integration": "GET /api/neno-exchange/quote?direction=sell uses bid price",
+    "buy_integration": "POST /api/neno-exchange/buy uses ask price, updates treasury (NENO decreases), records PnL",
+    "sell_integration": "POST /api/neno-exchange/sell uses bid price, updates treasury (NENO increases), records PnL",
+    "crypto_offramp_fallback": "POST /api/neno-exchange/offramp with destination=crypto attempts stablecoin transfer (fails correctly with 0 USDT)"
+  },
+  "treasury_state": {
+    "neno_balance": "397.0 (from on-chain hot wallet)",
+    "eur_balance": "Tracked internally",
+    "usdt_balance": "0 (crypto off-ramp fails as expected)"
+  },
+  "pricing_observed": {
+    "bid": 9815.16,
+    "ask": 9984.82,
+    "mid_price": 9999.99,
+    "spread_bps": 169.7,
+    "inventory_skew": -0.0165,
+    "treasury_neno": 397.0
+  }
+}
