@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  PORT: {{ .Values.api.port | quote }}
+  TIER1_DATA_DIR: "/var/lib/tier1-exchange"
+  DEFAULT_SETTLEMENT_ADAPTER: {{ .Values.config.DEFAULT_SETTLEMENT_ADAPTER | quote }}
+  SETTLEMENT_ADAPTER: {{ .Values.config.SETTLEMENT_ADAPTER | quote }}
+  BLOCKCHAIN_EXECUTION_MODE: {{ .Values.config.BLOCKCHAIN_EXECUTION_MODE | quote }}
+  PERSISTENCE_DRIVER: {{ .Values.config.PERSISTENCE_DRIVER | quote }}
+  BSC_CHAIN_ID: {{ .Values.config.BSC_CHAIN_ID | quote }}
+  BSC_CONFIRMATION_DEPTH: {{ .Values.config.BSC_CONFIRMATION_DEPTH | quote }}
+  ETHEREUM_CHAIN_ID: {{ .Values.config.ETHEREUM_CHAIN_ID | quote }}
+  ETHEREUM_CONFIRMATION_DEPTH: {{ .Values.config.ETHEREUM_CONFIRMATION_DEPTH | quote }}
+  NENO_USDT_RATE: {{ .Values.config.NENO_USDT_RATE | quote }}
+  WBNB_USDT_PRICE: {{ .Values.config.WBNB_USDT_PRICE | quote }}
+  NENO_DECIMALS: {{ .Values.config.NENO_DECIMALS | quote }}
+  USDT_DECIMALS: {{ .Values.config.USDT_DECIMALS | quote }}
+  USDC_DECIMALS: {{ .Values.config.USDC_DECIMALS | quote }}
+  WBNB_DECIMALS: {{ .Values.config.WBNB_DECIMALS | quote }}
+  ETH_DECIMALS: {{ .Values.config.ETH_DECIMALS | quote }}
+  BTC_DECIMALS: {{ .Values.config.BTC_DECIMALS | quote }}
+  PRIMARY_EVM_CHAIN: {{ .Values.config.PRIMARY_EVM_CHAIN | quote }}
+  PRICE_DISCOVERY_MODE: {{ .Values.config.PRICE_DISCOVERY_MODE | quote }}
+  NODE_OPTIONS: {{ .Values.config.NODE_OPTIONS | quote }}
+  SWAP_APPROVAL_MODE: {{ .Values.config.SWAP_APPROVAL_MODE | quote }}
+  COINGECKO_API_BASE_URL: {{ .Values.config.COINGECKO_API_BASE_URL | quote }}
+  DEXSCREENER_API_BASE_URL: {{ .Values.config.DEXSCREENER_API_BASE_URL | quote }}
+  API_RATE_LIMIT_WINDOW_MS: {{ .Values.config.API_RATE_LIMIT_WINDOW_MS | quote }}
+  API_RATE_LIMIT_MAX: {{ .Values.config.API_RATE_LIMIT_MAX | quote }}
+  USER_EXPOSURE_LIMIT: {{ .Values.config.USER_EXPOSURE_LIMIT | quote }}
+  ASSET_EXPOSURE_LIMIT: {{ .Values.config.ASSET_EXPOSURE_LIMIT | quote }}
+  RISK_SINGLE_EXECUTION_THRESHOLD: {{ .Values.config.RISK_SINGLE_EXECUTION_THRESHOLD | quote }}
+  RISK_VELOCITY_WINDOW_MS: {{ .Values.config.RISK_VELOCITY_WINDOW_MS | quote }}
+  RISK_VELOCITY_MAX_ORDERS: {{ .Values.config.RISK_VELOCITY_MAX_ORDERS | quote }}
+  ASYNC_RISK_NOTIONAL_LIMIT: {{ .Values.config.ASYNC_RISK_NOTIONAL_LIMIT | quote }}

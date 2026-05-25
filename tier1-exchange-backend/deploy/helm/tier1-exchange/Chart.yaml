@@ -1,0 +1,6 @@
+apiVersion: v2
+name: tier1-exchange
+description: Distributed event-sourced Tier-1 exchange backend foundation
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

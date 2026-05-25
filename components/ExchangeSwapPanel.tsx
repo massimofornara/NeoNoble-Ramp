@@ -4,15 +4,18 @@ import { useMemo, useState } from 'react';
 import { Repeat2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { MoonPayWidget } from '@/components/MoonPayWidget';
 
 export function ExchangeSwapPanel({ userId }: { userId: string }) {
   const [fromAsset, setFromAsset] = useState('NENO');
-  const [toAsset, setToAsset] = useState('USDC');
+  const [toAsset, setToAsset] = useState('USDT');
   const [amount, setAmount] = useState('1');
   const [orderType, setOrderType] = useState<'MARKET' | 'LIMIT'>('MARKET');
   const [limitPrice, setLimitPrice] = useState('');
   const [maxSlippageBps, setMaxSlippageBps] = useState(100);
   const [quote, setQuote] = useState<any>(null);
+  const [moonPayAction, setMoonPayAction] = useState<any>(null);
+  const [moonPayOpen, setMoonPayOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const idempotencyKey = useMemo(() => `swap-${crypto.randomUUID()}`, []);
 
@@ -26,15 +29,30 @@ export function ExchangeSwapPanel({ userId }: { userId: string }) {
   const execute = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/exchange/swap', {
+      const response = await fetch('/api/swap', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-user-id': userId },
-        body: JSON.stringify({ userId, fromAsset, toAsset, amount, orderType, limitPrice, maxSlippageBps, idempotencyKey }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          fromToken: fromAsset,
+          toToken: toAsset,
+          cryptoAmount: amount,
+          orderType,
+          limitPrice,
+          maxSlippageBps,
+          idempotencyKey,
+          network: 'BSC',
+        }),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'Swap failed');
-      setQuote(payload.quote);
-      toast({ title: 'Swap settled', description: payload.ledgerTransactionId });
+      if (payload.executionRoute?.provider === 'moonpay') {
+        setMoonPayAction(payload.executionRoute);
+        setMoonPayOpen(true);
+        toast({ title: 'Fallback provider attivato', description: 'MoonPay gestira liquidita e conferma via webhook.' });
+      } else {
+        toast({ title: 'Swap in coda', description: payload.transactionId });
+      }
     } catch (caught) {
       toast({ title: 'Swap blocked', description: caught instanceof Error ? caught.message : 'Swap failed', variant: 'destructive' });
     } finally {
@@ -68,6 +86,13 @@ export function ExchangeSwapPanel({ userId }: { userId: string }) {
         <Button className="bg-emerald-300 text-black hover:bg-emerald-200" onClick={() => void getQuote()}>Quote</Button>
         <Button className="bg-cyan-300 text-black hover:bg-cyan-200" onClick={() => void execute()} disabled={loading}>{loading ? 'Settling' : 'Execute'}</Button>
       </div>
+      <MoonPayWidget
+        open={moonPayOpen}
+        onOpenChange={setMoonPayOpen}
+        action={moonPayAction}
+        title="Liquidity fallback"
+        description="On-chain USDT liquidity is unavailable; execution switches to MoonPay provider-backed liquidity."
+      />
     </section>
   );
 }

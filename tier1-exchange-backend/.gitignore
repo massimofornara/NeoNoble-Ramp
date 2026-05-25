@@ -1,0 +1,4 @@
+dist/
+data/
+server.log
+server.err.log

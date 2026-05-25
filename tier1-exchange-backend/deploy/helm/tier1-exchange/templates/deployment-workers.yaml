@@ -1,0 +1,41 @@
+{{- $root := . -}}
+{{- range $worker := list (dict "name" "settlement" "replicas" .Values.workers.settlementReplicas) (dict "name" "reconciliation" "replicas" .Values.workers.reconciliationReplicas) (dict "name" "risk" "replicas" .Values.workers.riskReplicas) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $root.Release.Name }}-{{ $worker.name }}-worker
+spec:
+  replicas: {{ $worker.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $root.Release.Name }}-{{ $worker.name }}-worker
+  template:
+    metadata:
+      labels:
+        app: {{ $root.Release.Name }}-{{ $worker.name }}-worker
+    spec:
+      containers:
+        - name: worker
+          image: "{{ $root.Values.image.repository }}:{{ $root.Values.image.tag }}"
+          imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ $root.Release.Name }}-config
+            - secretRef:
+                name: {{ $root.Release.Name }}-secrets
+          env:
+            - name: WORKER_ROLE
+              value: {{ $worker.name | quote }}
+          ports:
+            - containerPort: {{ $root.Values.api.port }}
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+---
+{{- end }}

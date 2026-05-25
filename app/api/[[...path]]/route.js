@@ -1,106 +1,148 @@
-import { MongoClient } from 'mongodb'
-import { v4 as uuidv4 } from 'uuid'
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server"
+import { createLedgerTransactionFromRequest } from "@/lib/ledger/ledgerService"
 
-// MongoDB connection
-let client
-let db
-
-async function connectToMongo() {
-  if (!client) {
-    client = new MongoClient(process.env.MONGO_URL)
-    await client.connect()
-    db = client.db(process.env.DB_NAME)
-  }
-  return db
-}
-
-// Helper function to handle CORS
 function handleCORS(response) {
-  response.headers.set('Access-Control-Allow-Origin', process.env.CORS_ORIGINS || '*')
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  response.headers.set('Access-Control-Allow-Credentials', 'true')
+  response.headers.set("Access-Control-Allow-Origin", "*")
+  response.headers.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization")
   return response
 }
 
-// OPTIONS handler for CORS
-export async function OPTIONS() {
-  return handleCORS(new NextResponse(null, { status: 200 }))
-}
-
-// Route handler function
-async function handleRoute(request, context) {
-  const params = await context.params?.catch?.(() => ({})) ?? {}
-  const path = params.path ?? []
-
-  const route = `/${path.join('/')}`
-}
-
+async function handleRoute(request, { params }) {
   try {
-    const db = await connectToMongo()
+    const method = request.method
+    const path = params.path || []
+    const route = "/" + path.join("/")
 
-    // Root endpoint - GET /api/root (since /api/ is not accessible with catch-all)
-    if (route === '/root' && method === 'GET') {
-      return handleCORS(NextResponse.json({ message: "Hello World" }))
-    }
-    // Root endpoint - GET /api/root (since /api/ is not accessible with catch-all)
-    if (route === '/' && method === 'GET') {
-      return handleCORS(NextResponse.json({ message: "Hello World" }))
+    // ROOT
+    if ((route === "/" || route === "/root") && method === "GET") {
+      return handleCORS(
+        NextResponse.json({
+          success: true,
+          service: "NeoNoble Ramp API",
+          status: "online"
+        })
+      )
     }
 
-    // Status endpoints - POST /api/status
-    if (route === '/status' && method === 'POST') {
+    // STATUS POST
+    if (route === "/status" && method === "POST") {
       const body = await request.json()
-      
+
       if (!body.client_name) {
-        return handleCORS(NextResponse.json(
-          { error: "client_name is required" }, 
-          { status: 400 }
-        ))
+        return handleCORS(
+          NextResponse.json(
+            { error: "client_name is required" },
+            { status: 400 }
+          )
+        )
       }
 
-      const statusObj = {
-        id: uuidv4(),
-        client_name: body.client_name,
-        timestamp: new Date()
-      }
-
-      await db.collection('status_checks').insertOne(statusObj)
-      return handleCORS(NextResponse.json(statusObj))
+      return handleCORS(
+        NextResponse.json({
+          success: true,
+          received: body
+        })
+      )
     }
 
-    // Status endpoints - GET /api/status
-    if (route === '/status' && method === 'GET') {
-      const statusChecks = await db.collection('status_checks')
-        .find({})
-        .limit(1000)
-        .toArray()
-
-      // Remove MongoDB's _id field from response
-      const cleanedStatusChecks = statusChecks.map(({ _id, ...rest }) => rest)
-      
-      return handleCORS(NextResponse.json(cleanedStatusChecks))
+    // STATUS GET
+    if (route === "/status" && method === "GET") {
+      return handleCORS(
+        NextResponse.json({
+          success: true,
+          api: "running"
+        })
+      )
     }
 
-    // Route not found
-    return handleCORS(NextResponse.json(
-      { error: `Route ${route} not found` }, 
-      { status: 404 }
-    ))
+    // ONRAMP legacy path, backed by the persistent ledger.
+    if (route === "/onramp" && method === "POST") {
+      const body = await request.json()
+      const transaction = await createLedgerTransactionFromRequest("onramp", {
+        ...body,
+        toToken: body.toToken || "NENO",
+      })
+
+      return handleCORS(
+        NextResponse.json({
+          success: true,
+          type: "onramp",
+          transactionId: transaction.id,
+          currentStep: transaction.step,
+          data: body,
+          status: transaction.status
+        })
+      )
+    }
+
+    // OFFRAMP legacy path, backed by the persistent ledger.
+    if (route === "/offramp" && method === "POST") {
+      const body = await request.json()
+      const transaction = await createLedgerTransactionFromRequest("offramp", {
+        ...body,
+        fromToken: body.fromToken || "NENO",
+      })
+      return handleCORS(
+        NextResponse.json({
+          success: true,
+          type: "offramp",
+          transactionId: transaction.id,
+          txHash: transaction.txHash,
+          currentStep: transaction.step,
+          chainStatus: transaction.chainStatus,
+          estimatedCompletion: null,
+          data: body,
+          status: transaction.status
+        })
+      )
+    }
+
+    // SWAP legacy path, backed by the persistent ledger.
+    if (route === "/swap" && method === "POST") {
+      const body = await request.json()
+      const transaction = await createLedgerTransactionFromRequest("swap", {
+        ...body,
+        fromToken: body.fromToken || "NENO",
+        toToken: body.toToken || "USDC",
+      })
+
+      return handleCORS(
+        NextResponse.json({
+          success: true,
+          type: "swap",
+          transactionId: transaction.id,
+          currentStep: transaction.step,
+          data: body,
+          status: transaction.status
+        })
+      )
+    }
+
+    return handleCORS(
+      NextResponse.json(
+        { error: `Route ${route} not found` },
+        { status: 404 }
+      )
+    )
 
   } catch (error) {
-    console.error('API Error:', error)
-    return handleCORS(NextResponse.json(
-      { error: "Internal server error" }, 
-      { status: 500 }
-    ))
+    console.error("API Error:", error)
+
+    return handleCORS(
+      NextResponse.json(
+        {
+          success: false,
+          error: error.message
+        },
+        { status: 500 }
+      )
+    )
   }
 }
 
-// Export all HTTP methods
 export const GET = handleRoute
 export const POST = handleRoute
-export const PUT = handleRoute
-export const DELETE = handleRoute
-export const PATCH = handleRoute
+export const OPTIONS = async () => {
+  return handleCORS(new NextResponse(null, { status: 204 }))
+}

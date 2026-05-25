@@ -1,0 +1,31 @@
+{
+  "name": "tier1-exchange-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Production-grade Tier-1 exchange backend architecture with event sourcing, append-only ledger, idempotency, settlement, and reconciliation.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node --use-system-ca dist/api/cli.js",
+    "demo": "node --use-system-ca dist/scripts/example-flow.js",
+    "stress:real": "node --use-system-ca dist/scripts/stress-real-flows.js",
+    "stress:intent": "node --use-system-ca dist/scripts/stress-intent-flows.js",
+    "ladder:real": "node --use-system-ca dist/scripts/full-ladder-execution-run.js",
+    "payout:offramps": "node --use-system-ca dist/scripts/create-offramp-payouts.js",
+    "direct-sepa:activate": "node --use-system-ca dist/scripts/direct-sepa-activation.js",
+    "providers:readiness": "node --use-system-ca dist/scripts/provider-readiness.js",
+    "settlement:recover-stuck": "node --use-system-ca dist/scripts/recover-stuck-settlements.js",
+    "production:safe-run": "node --use-system-ca dist/scripts/production-safe-execution-run.js",
+    "validate:production": "node --use-system-ca dist/scripts/production-validation.js",
+    "fireblocks:sandbox-check": "node --use-system-ca dist/scripts/fireblocks-sandbox-check.js",
+    "fireblocks:payout-offramps": "node --use-system-ca dist/scripts/fireblocks-payout-confirmed-offramps.js",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0",
+    "pg": "^8.21.0"
+  }
+}

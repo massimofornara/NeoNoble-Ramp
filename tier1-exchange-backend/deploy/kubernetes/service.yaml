@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tier1-exchange-api
+  namespace: tier1-exchange
+spec:
+  selector:
+    app: tier1-exchange-api
+  ports:
+    - name: http
+      port: 4100
+      targetPort: 4100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tier1-event-stream
+  namespace: tier1-exchange
+spec:
+  clusterIP: None
+  selector:
+    app: tier1-event-stream
+  ports:
+    - name: replication
+      port: 9092
+      targetPort: 9092

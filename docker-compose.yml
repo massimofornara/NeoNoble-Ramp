@@ -7,8 +7,17 @@ services:
     env_file:
       - .env.example
     environment:
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
       DATABASE_URL: postgresql://neonoble:neonoble123@postgres:5432/neonoble_ramp
       REDIS_URL: redis://redis:6379
+      BLOCKCHAIN_EXECUTION_MODE: ${BLOCKCHAIN_EXECUTION_MODE:-disabled}
+      BSC_RPC_URL: ${BSC_RPC_URL:-https://bsc-dataseed1.binance.org/}
+      HOT_WALLET_PRIVATE_KEY: ${HOT_WALLET_PRIVATE_KEY:-}
+      EXECUTION_WALLET_ADDRESS: ${EXECUTION_WALLET_ADDRESS:-}
+      DEFAULT_SETTLEMENT_ADDRESS: ${DEFAULT_SETTLEMENT_ADDRESS:-}
+      OFFRAMP_TREASURY_ADDRESS: ${OFFRAMP_TREASURY_ADDRESS:-}
+      NENO_CONTRACT_ADDRESS: ${NENO_CONTRACT_ADDRESS:-}
+      USDT_CONTRACT_ADDRESS: ${USDT_CONTRACT_ADDRESS:-0x55d398326f99059fF775485246999027B3197955}
     ports:
       - "3000:3000"
     depends_on:
@@ -74,11 +83,40 @@ services:
     env_file:
       - .env.example
     environment:
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
       DATABASE_URL: postgresql://neonoble:neonoble123@postgres:5432/neonoble_ramp
       REDIS_URL: redis://redis:6379
       RECONCILIATION_BASE_URL: http://app:3000
     depends_on:
       app:
+        condition: service_healthy
+
+  transaction-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neonoble-transaction-worker
+    command: ["node", "workers/transactionWorker.js"]
+    env_file:
+      - .env.example
+    environment:
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
+      DATABASE_URL: postgresql://neonoble:neonoble123@postgres:5432/neonoble_ramp
+      REDIS_URL: redis://redis:6379
+      BLOCKCHAIN_EXECUTION_MODE: ${BLOCKCHAIN_EXECUTION_MODE:-disabled}
+      BSC_RPC_URL: ${BSC_RPC_URL:-https://bsc-dataseed1.binance.org/}
+      HOT_WALLET_PRIVATE_KEY: ${HOT_WALLET_PRIVATE_KEY:-}
+      EXECUTION_WALLET_ADDRESS: ${EXECUTION_WALLET_ADDRESS:-}
+      DEFAULT_SETTLEMENT_ADDRESS: ${DEFAULT_SETTLEMENT_ADDRESS:-}
+      OFFRAMP_TREASURY_ADDRESS: ${OFFRAMP_TREASURY_ADDRESS:-}
+      NENO_CONTRACT_ADDRESS: ${NENO_CONTRACT_ADDRESS:-}
+      USDT_CONTRACT_ADDRESS: ${USDT_CONTRACT_ADDRESS:-0x55d398326f99059fF775485246999027B3197955}
+      WORKER_INTERVAL_MS: 5000
+      BSC_CONFIRMATIONS: ${BSC_CONFIRMATIONS:-3}
+      BSC_FINALITY_CONFIRMATIONS: ${BSC_FINALITY_CONFIRMATIONS:-12}
+      PSP_ADAPTER: ${PSP_ADAPTER:-transak}
+    depends_on:
+      postgres:
         condition: service_healthy
 
   ws-gateway:
@@ -90,6 +128,7 @@ services:
     env_file:
       - .env.example
     environment:
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
       REDIS_URL: redis://redis:6379
       WS_GATEWAY_PORT: 8080
     ports:

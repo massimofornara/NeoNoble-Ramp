@@ -1,0 +1,47 @@
+Eseguita la full ladder in modalità reale controllata.
+
+Ho aggiunto anche il runner dedicato [full-ladder-execution-run.ts](C:/Users/massi/NeoNoble-Ramp/tier1-exchange-backend/src/scripts/full-ladder-execution-run.ts) e lo script `npm run ladder:real` in [package.json](C:/Users/massi/NeoNoble-Ramp/tier1-exchange-backend/package.json:13).
+
+**Risultato batch**
+- Totale flow: `54`
+- Swap NENO → USDT/USDC/WBNB/ETH/BTC: `50/50` fermati prima del signer
+- Motivo swap: `REFERENCE_PRICE_IMPACT_EXCEEDED:10000bps`
+- Broadcast swap: `0`
+- Offramp EUR: `4/4 settlement_confirmed`
+- Reconciliation integrity: `true` per tutti gli offramp confermati
+- Ledger hash-chain: `valid`
+- Settlement proof hash-chain: `valid`
+- Anti-fake scan: pulito
+
+Gli swap avevano calldata 0x executable, ma il prezzo reale disponibile era troppo distante dal benchmark `1 NENO = 20,000 USDT`; quindi il sistema ha correttamente rifiutato l’esecuzione prima del broadcast. Nessun fake settlement, nessun txHash sintetico.
+
+**Offramp Confermati**
+- `100 NENO → EUR`
+  - txHash: `0xc6523308aa03cb4057f880f4bead67f3fae77d67d9895e01d43b274b2d0392de`
+  - settlementId: `set_2eb78d33-cb5b-4e8c-9050-fb5b21266ad5`
+  - transactionId: `b9f35b47-fecb-40d3-9aae-a9d201c05ac2`
+
+- `1,000 NENO → EUR`
+  - txHash: `0xa50e4343aafaef978f6f23d1fb1a981ecf9e371b81b33762d8335be967e728c4`
+  - settlementId: `set_5343326e-c5e6-4ba2-a595-bdc2e31c9ace`
+  - transactionId: `08e6ee72-5650-4524-98cd-64ca5e5dee3a`
+
+- `5,000 NENO → EUR`
+  - txHash: `0x4c9b514cb243ca58284247356b893265596b2ab3c0efac2345a0098b2fc83da6`
+  - settlementId: `set_df248ef4-f1d4-4364-9e16-12ca38bb669a`
+  - transactionId: `b4805b3d-7385-4a36-9f7d-7e2292189bbe`
+
+- `20,000 NENO → EUR`
+  - txHash: `0xda9794ca1c349d45c5fd91d59e1304f8e06da0150717656cb68709208efe4692`
+  - settlementId: `set_c2a3fb6d-34a0-478c-bab1-5b5406b0340d`
+  - transactionId: `7814f358-cac0-43bf-80f9-e8eae7dae3b8`
+
+**Stato Treasury / Ledger**
+- Treasury NENO post-run: `5,909,040.00504`
+- BNB gas reserve: `0.038614127122849171`, still healthy
+- Nuovo batch offramp: `26,100 NENO`
+- Valore batch al reference price: `522,000,000 EUR`
+- Ledger balance corrente `massi-prod-001`: `EUR = 1,388,000,000` cumulativo
+
+Puoi monitorare gli ordini con:
+`curl http://127.0.0.1:4100/orders/<transactionId>`

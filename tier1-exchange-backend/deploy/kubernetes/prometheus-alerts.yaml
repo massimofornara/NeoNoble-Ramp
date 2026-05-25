@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tier1-exchange-alerts
+  namespace: tier1-exchange
+spec:
+  groups:
+    - name: tier1-exchange
+      rules:
+        - alert: SettlementFailures
+          expr: sum(exchange_reconciliation_integrity_failures_total) > 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: Reconciliation integrity failure detected
+        - alert: DeadLetterQueueGrowth
+          expr: sum(exchange_dlq_total) > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: Event consumer dead-letter queue has records

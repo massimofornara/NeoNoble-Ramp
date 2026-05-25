@@ -1,0 +1,5 @@
+
+> tier1-exchange-backend@1.0.0 start
+> node dist/api/cli.js
+
+{"level":"info","component":"api-gateway","message":"listening on 4118"}

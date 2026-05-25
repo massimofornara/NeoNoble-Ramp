@@ -1,121 +1,239 @@
-version: '3.8'
-
 services:
+
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: neonoble-postgres
     restart: unless-stopped
+
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-neonoble}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-neonoble123}
       POSTGRES_DB: ${POSTGRES_DB:-neonoble_ramp}
+
     ports:
       - "5432:5432"
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backups:/backups
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U neonoble"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-neonoble} -d ${POSTGRES_DB:-neonoble_ramp}"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+
     networks:
       - neonoble-net
+
+
+  redis:
+    image: redis:7-alpine
+    container_name: neonoble-redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - neonoble-net
+
 
   api:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
+
+    image: neonoble-ramp-api
     container_name: neonoble-api
     restart: unless-stopped
+
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
-      - NEONOBLE_PLATFORM_API_KEY=${NEONOBLE_PLATFORM_API_KEY}
-      - NEONOBLE_PLATFORM_API_SECRET=${NEONOBLE_PLATFORM_API_SECRET}
-      - PAYMENT_MODE=${PAYMENT_MODE:-mock}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - BSC_RPC_URL=${BSC_RPC_URL}
-      - BSC_PRIVATE_KEY=${BSC_PRIVATE_KEY}
-      - NENO_CONTRACT_ADDRESS=${NENO_CONTRACT_ADDRESS}
-      - NODE_ENV=production
+      NODE_ENV: production
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
+
+      # 🔴 FIX CRITICO
+      DATABASE_URL: postgresql://${POSTGRES_USER:-neonoble}:${POSTGRES_PASSWORD:-neonoble123}@postgres:5432/${POSTGRES_DB:-neonoble_ramp}
+
+      REDIS_URL: redis://redis:6379
+
+      JWT_SECRET: ${JWT_SECRET}
+
+      PAYMENT_MODE: ${PAYMENT_MODE:-mock}
+
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_RAIL_ENABLED: ${STRIPE_RAIL_ENABLED:-false}
+      STRIPE_SEPA_FALLBACK_ENABLED: ${STRIPE_SEPA_FALLBACK_ENABLED:-false}
+      STRIPE_FIAT_BACKED_SWAP_ENABLED: ${STRIPE_FIAT_BACKED_SWAP_ENABLED:-false}
+      STRIPE_PAYOUTS_ENABLED: ${STRIPE_PAYOUTS_ENABLED:-false}
+      STRIPE_CONNECTED_ACCOUNT_ID: ${STRIPE_CONNECTED_ACCOUNT_ID:-}
+      WISE_BASE_URL: ${WISE_BASE_URL:-}
+      WISE_ACCESS_TOKEN: ${WISE_ACCESS_TOKEN:-}
+      WISE_PROFILE_ID: ${WISE_PROFILE_ID:-}
+      WISE_BALANCE_ID: ${WISE_BALANCE_ID:-}
+      WISE_PAYOUTS_ENABLED: ${WISE_PAYOUTS_ENABLED:-false}
+      WISE_DEFAULT_BENEFICIARY_NAME: ${WISE_DEFAULT_BENEFICIARY_NAME:-}
+      WISE_RECIPIENT_ACCOUNT_ID: ${WISE_RECIPIENT_ACCOUNT_ID:-}
+      LIQUIDITY_BOOTSTRAP_ENABLED: ${LIQUIDITY_BOOTSTRAP_ENABLED:-false}
+      LIQUIDITY_BOOTSTRAP_API_URL: ${LIQUIDITY_BOOTSTRAP_API_URL:-}
+      LIQUIDITY_BOOTSTRAP_API_KEY: ${LIQUIDITY_BOOTSTRAP_API_KEY:-}
+      USDT_FUNDING_REQUEST_URL: ${USDT_FUNDING_REQUEST_URL:-}
+      USDT_LIQUIDITY_PROVIDER_URL: ${USDT_LIQUIDITY_PROVIDER_URL:-}
+      USDT_LIQUIDITY_PROVIDER_API_KEY: ${USDT_LIQUIDITY_PROVIDER_API_KEY:-}
+      EUR_FUNDING_REQUEST_URL: ${EUR_FUNDING_REQUEST_URL:-}
+      EUR_LIQUIDITY_PROVIDER_URL: ${EUR_LIQUIDITY_PROVIDER_URL:-}
+      EUR_LIQUIDITY_PROVIDER_API_KEY: ${EUR_LIQUIDITY_PROVIDER_API_KEY:-}
+
+      BSC_RPC_URL: ${BSC_RPC_URL}
+      BLOCKCHAIN_EXECUTION_MODE: ${BLOCKCHAIN_EXECUTION_MODE:-disabled}
+      BSC_PRIVATE_KEY: ${BSC_PRIVATE_KEY}
+      HOT_WALLET_PRIVATE_KEY: ${HOT_WALLET_PRIVATE_KEY}
+      EXECUTION_WALLET_ADDRESS: ${EXECUTION_WALLET_ADDRESS}
+      DEFAULT_SETTLEMENT_ADDRESS: ${DEFAULT_SETTLEMENT_ADDRESS}
+      OFFRAMP_TREASURY_ADDRESS: ${OFFRAMP_TREASURY_ADDRESS}
+      NENO_CONTRACT_ADDRESS: ${NENO_CONTRACT_ADDRESS}
+      USDT_CONTRACT_ADDRESS: ${USDT_CONTRACT_ADDRESS:-0x55d398326f99059fF775485246999027B3197955}
+      BSC_CONFIRMATIONS: ${BSC_CONFIRMATIONS:-3}
+      BSC_FINALITY_CONFIRMATIONS: ${BSC_FINALITY_CONFIRMATIONS:-12}
+      PSP_ADAPTER: ${PSP_ADAPTER:-transak}
+
     ports:
       - "3000:3000"
+
+    command: >
+      sh -c "
+      npx prisma migrate deploy &&
+      npm run build &&
+      npm run start
+      "
+
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
     networks:
       - neonoble-net
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+
 
   worker:
     build:
       context: .
       dockerfile: Dockerfile
-      target: worker
+
+    image: neonoble-ramp-worker
     container_name: neonoble-worker
     restart: unless-stopped
+
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - BSC_RPC_URL=${BSC_RPC_URL}
-      - BSC_PRIVATE_KEY=${BSC_PRIVATE_KEY}
-      - NENO_CONTRACT_ADDRESS=${NENO_CONTRACT_ADDRESS}
-      - BSC_CONFIRMATIONS=${BSC_CONFIRMATIONS:-12}
-      - WORKER_ENABLED=true
-      - WORKER_INTERVAL_MS=${WORKER_INTERVAL_MS:-5000}
+      NODE_ENV: production
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
+
+      DATABASE_URL: postgresql://${POSTGRES_USER:-neonoble}:${POSTGRES_PASSWORD:-neonoble123}@postgres:5432/${POSTGRES_DB:-neonoble_ramp}
+      REDIS_URL: redis://redis:6379
+
+      WORKER_ENABLED: "true"
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_RAIL_ENABLED: ${STRIPE_RAIL_ENABLED:-false}
+      STRIPE_SEPA_FALLBACK_ENABLED: ${STRIPE_SEPA_FALLBACK_ENABLED:-false}
+      STRIPE_FIAT_BACKED_SWAP_ENABLED: ${STRIPE_FIAT_BACKED_SWAP_ENABLED:-false}
+      STRIPE_PAYOUTS_ENABLED: ${STRIPE_PAYOUTS_ENABLED:-false}
+      STRIPE_CONNECTED_ACCOUNT_ID: ${STRIPE_CONNECTED_ACCOUNT_ID:-}
+      WISE_BASE_URL: ${WISE_BASE_URL:-}
+      WISE_ACCESS_TOKEN: ${WISE_ACCESS_TOKEN:-}
+      WISE_PROFILE_ID: ${WISE_PROFILE_ID:-}
+      WISE_BALANCE_ID: ${WISE_BALANCE_ID:-}
+      WISE_PAYOUTS_ENABLED: ${WISE_PAYOUTS_ENABLED:-false}
+      WISE_DEFAULT_BENEFICIARY_NAME: ${WISE_DEFAULT_BENEFICIARY_NAME:-}
+      WISE_RECIPIENT_ACCOUNT_ID: ${WISE_RECIPIENT_ACCOUNT_ID:-}
+      LIQUIDITY_BOOTSTRAP_ENABLED: ${LIQUIDITY_BOOTSTRAP_ENABLED:-false}
+      LIQUIDITY_BOOTSTRAP_API_URL: ${LIQUIDITY_BOOTSTRAP_API_URL:-}
+      LIQUIDITY_BOOTSTRAP_API_KEY: ${LIQUIDITY_BOOTSTRAP_API_KEY:-}
+      USDT_FUNDING_REQUEST_URL: ${USDT_FUNDING_REQUEST_URL:-}
+      USDT_LIQUIDITY_PROVIDER_URL: ${USDT_LIQUIDITY_PROVIDER_URL:-}
+      USDT_LIQUIDITY_PROVIDER_API_KEY: ${USDT_LIQUIDITY_PROVIDER_API_KEY:-}
+      EUR_FUNDING_REQUEST_URL: ${EUR_FUNDING_REQUEST_URL:-}
+      EUR_LIQUIDITY_PROVIDER_URL: ${EUR_LIQUIDITY_PROVIDER_URL:-}
+      EUR_LIQUIDITY_PROVIDER_API_KEY: ${EUR_LIQUIDITY_PROVIDER_API_KEY:-}
+      BLOCKCHAIN_EXECUTION_MODE: ${BLOCKCHAIN_EXECUTION_MODE:-disabled}
+      BSC_RPC_URL: ${BSC_RPC_URL}
+      BSC_PRIVATE_KEY: ${BSC_PRIVATE_KEY}
+      HOT_WALLET_PRIVATE_KEY: ${HOT_WALLET_PRIVATE_KEY}
+      EXECUTION_WALLET_ADDRESS: ${EXECUTION_WALLET_ADDRESS}
+      DEFAULT_SETTLEMENT_ADDRESS: ${DEFAULT_SETTLEMENT_ADDRESS}
+      OFFRAMP_TREASURY_ADDRESS: ${OFFRAMP_TREASURY_ADDRESS}
+      NENO_CONTRACT_ADDRESS: ${NENO_CONTRACT_ADDRESS}
+      USDT_CONTRACT_ADDRESS: ${USDT_CONTRACT_ADDRESS:-0x55d398326f99059fF775485246999027B3197955}
+      BSC_CONFIRMATIONS: ${BSC_CONFIRMATIONS:-3}
+      BSC_FINALITY_CONFIRMATIONS: ${BSC_FINALITY_CONFIRMATIONS:-12}
+      PSP_ADAPTER: ${PSP_ADAPTER:-transak}
+
+    command: node workers/transactionWorker.js
+
     networks:
       - neonoble-net
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+
 
   reconciler:
     build:
       context: .
       dockerfile: Dockerfile
-      target: reconciler
+
+    image: neonoble-ramp-reconciler
     container_name: neonoble-reconciler
     restart: unless-stopped
+
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - BSC_RPC_URL=${BSC_RPC_URL}
-      - BSC_PRIVATE_KEY=${BSC_PRIVATE_KEY}
-      - NENO_CONTRACT_ADDRESS=${NENO_CONTRACT_ADDRESS}
-      - PAYMENT_MODE=${PAYMENT_MODE:-mock}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - RECONCILE_INTERVAL_MS=${RECONCILE_INTERVAL_MS:-60000}
+      NODE_ENV: production
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/ca-certificates.crt
+
+      DATABASE_URL: postgresql://${POSTGRES_USER:-neonoble}:${POSTGRES_PASSWORD:-neonoble123}@postgres:5432/${POSTGRES_DB:-neonoble_ramp}
+      REDIS_URL: redis://redis:6379
+
+      RECONCILE_INTERVAL_MS: ${RECONCILE_INTERVAL_MS:-60000}
+
+    command: node workers/consistencyReconciler.js
+
     networks:
       - neonoble-net
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+
 
 networks:
   neonoble-net:
     driver: bridge
 
+
 volumes:
   postgres_data:
-    driver: local
+  redis_data:

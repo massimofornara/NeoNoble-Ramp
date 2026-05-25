@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tier1-event-stream
+  namespace: tier1-exchange
+spec:
+  serviceName: tier1-event-stream
+  replicas: 4
+  selector:
+    matchLabels:
+      app: tier1-event-stream
+  template:
+    metadata:
+      labels:
+        app: tier1-event-stream
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: event-stream-node
+          image: tier1-exchange-backend:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: tier1-exchange-config
+            - secretRef:
+                name: tier1-exchange-secrets
+          env:
+            - name: TIER1_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - containerPort: 4100
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - name: event-data
+              mountPath: /var/lib/tier1-exchange
+  volumeClaimTemplates:
+    - metadata:
+        name: event-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi

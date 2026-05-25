@@ -1,0 +1,99 @@
+image:
+  repository: tier1-exchange-backend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+api:
+  replicas: 3
+  port: 4100
+  hpa:
+    minReplicas: 3
+    maxReplicas: 12
+    cpuUtilization: 65
+
+eventStream:
+  replicas: 4
+  storage: 20Gi
+
+postgres:
+  enabled: true
+  storage: 100Gi
+  password: replace-me
+
+workers:
+  settlementReplicas: 3
+  reconciliationReplicas: 2
+  riskReplicas: 2
+
+config:
+  DEFAULT_SETTLEMENT_ADAPTER: bsc
+  SETTLEMENT_ADAPTER: bsc
+  BLOCKCHAIN_EXECUTION_MODE: real
+  PERSISTENCE_DRIVER: postgres
+  BSC_CHAIN_ID: "56"
+  BSC_CONFIRMATION_DEPTH: "15"
+  ETHEREUM_CHAIN_ID: "1"
+  ETHEREUM_CONFIRMATION_DEPTH: "64"
+  NENO_USDT_RATE: "20000"
+  WBNB_USDT_PRICE: "1000"
+  NENO_DECIMALS: "18"
+  USDT_DECIMALS: "18"
+  USDC_DECIMALS: "18"
+  WBNB_DECIMALS: "18"
+  ETH_DECIMALS: "18"
+  BTC_DECIMALS: "18"
+  PRIMARY_EVM_CHAIN: bsc
+  PRICE_DISCOVERY_MODE: real
+  NODE_OPTIONS: --use-system-ca
+  SWAP_APPROVAL_MODE: exact
+  COINGECKO_API_BASE_URL: https://api.coingecko.com/api/v3
+  DEXSCREENER_API_BASE_URL: https://api.dexscreener.com/latest/dex
+  API_RATE_LIMIT_WINDOW_MS: "60000"
+  API_RATE_LIMIT_MAX: "10000"
+  USER_EXPOSURE_LIMIT: "50000000000"
+  ASSET_EXPOSURE_LIMIT: "50000000000"
+  RISK_SINGLE_EXECUTION_THRESHOLD: "5000000000"
+  RISK_VELOCITY_WINDOW_MS: "60000"
+  RISK_VELOCITY_MAX_ORDERS: "10000"
+  ASYNC_RISK_NOTIONAL_LIMIT: "5000000000"
+
+secrets:
+  PROVIDER_WEBHOOK_SECRET: replace-me
+  AUDIT_SIGNING_KEY: replace-me
+  DATABASE_URL: postgres://tier1:replace-me@tier1-postgres:5432/tier1
+  BSC_RPC_URL: ""
+  ETHEREUM_RPC_URL: ""
+  TREASURY_ADDRESS: ""
+  TREASURY_PRIVATE_KEY: ""
+  BSC_SWAP_ROUTER_ADDRESS: ""
+  NENO_CONTRACT_ADDRESS: ""
+  USDT_CONTRACT_ADDRESS: ""
+  USDC_CONTRACT_ADDRESS: ""
+  WBNB_CONTRACT_ADDRESS: ""
+  ETH_CONTRACT_ADDRESS: ""
+  BTC_CONTRACT_ADDRESS: ""
+  OFFRAMP_CUSTODY_ADDRESS: ""
+  WINTERMUTE_RFQ_URL: ""
+  WINTERMUTE_API_KEY: ""
+  WINTERMUTE_RFQ_SECRET: ""
+  CUMBERLAND_RFQ_URL: ""
+  CUMBERLAND_API_KEY: ""
+  CUMBERLAND_RFQ_SECRET: ""
+  B2C2_RFQ_URL: ""
+  B2C2_API_KEY: ""
+  B2C2_RFQ_SECRET: ""
+  GSR_RFQ_URL: ""
+  GSR_API_KEY: ""
+  GSR_RFQ_SECRET: ""
+  AMBER_RFQ_URL: ""
+  AMBER_API_KEY: ""
+  AMBER_RFQ_SECRET: ""
+  FALCONX_RFQ_URL: ""
+  FALCONX_API_KEY: ""
+  FALCONX_RFQ_SECRET: ""
+  JUMP_RFQ_URL: ""
+  JUMP_API_KEY: ""
+  JUMP_RFQ_SECRET: ""
+  OTC_HUB_RFQ_URL: ""
+  OTC_HUB_API_KEY: ""
+  OTC_HUB_RFQ_SECRET: ""

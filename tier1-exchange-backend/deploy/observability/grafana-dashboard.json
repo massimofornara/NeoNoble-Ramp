@@ -1,0 +1,37 @@
+{
+  "title": "Tier1 Exchange Core",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Event Throughput",
+      "targets": [{ "expr": "sum by (type) (rate(exchange_event_throughput_total[1m]))" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Execution Latency",
+      "targets": [{ "expr": "exchange_execution_latency_ms_avg" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Settlement Latency",
+      "targets": [{ "expr": "exchange_settlement_latency_ms_avg" }]
+    },
+    {
+      "type": "stat",
+      "title": "DLQ Events",
+      "targets": [{ "expr": "sum(exchange_dlq_total)" }]
+    },
+    {
+      "type": "stat",
+      "title": "Reconciliation Integrity Failures",
+      "targets": [{ "expr": "sum(exchange_reconciliation_integrity_failures_total)" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Replay Duration",
+      "targets": [{ "expr": "exchange_replay_duration_ms_avg" }]
+    }
+  ]
+}

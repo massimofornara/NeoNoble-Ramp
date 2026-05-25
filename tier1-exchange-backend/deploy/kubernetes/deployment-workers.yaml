@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tier1-settlement-worker
+  namespace: tier1-exchange
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tier1-settlement-worker
+  template:
+    metadata:
+      labels:
+        app: tier1-settlement-worker
+    spec:
+      containers:
+        - name: worker
+          image: tier1-exchange-backend:latest
+          envFrom:
+            - configMapRef:
+                name: tier1-exchange-config
+            - secretRef:
+                name: tier1-exchange-secrets
+          env:
+            - name: WORKER_ROLE
+              value: settlement
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tier1-reconciliation-worker
+  namespace: tier1-exchange
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tier1-reconciliation-worker
+  template:
+    metadata:
+      labels:
+        app: tier1-reconciliation-worker
+    spec:
+      containers:
+        - name: worker
+          image: tier1-exchange-backend:latest
+          envFrom:
+            - configMapRef:
+                name: tier1-exchange-config
+            - secretRef:
+                name: tier1-exchange-secrets
+          env:
+            - name: WORKER_ROLE
+              value: reconciliation
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tier1-risk-worker
+  namespace: tier1-exchange
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tier1-risk-worker
+  template:
+    metadata:
+      labels:
+        app: tier1-risk-worker
+    spec:
+      containers:
+        - name: worker
+          image: tier1-exchange-backend:latest
+          envFrom:
+            - configMapRef:
+                name: tier1-exchange-config
+            - secretRef:
+                name: tier1-exchange-secrets
+          env:
+            - name: WORKER_ROLE
+              value: risk
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4100
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4100

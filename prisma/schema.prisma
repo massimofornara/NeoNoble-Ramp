@@ -193,3 +193,65 @@ enum PlatformApiKeyStatus {
   REVOKED
   EXPIRED
 }
+
+model Transaction {
+  id           String   @id @default(cuid())
+  userId       String
+  type         String
+  status       String
+
+  fromToken    String?
+  toToken      String?
+  cryptoAmount String?
+  fiatAmount   String?
+
+  fiatCurrency String?
+  network      String
+  chainId      Int?
+  chainName    String?
+
+  txHash       String?
+  step         String
+  blockNumber  Int?
+  gasUsed      String?
+  confirmations Int      @default(0)
+  chainStatus  String?
+  finalityStatus String?
+  settlementLayer String?
+  rawTxData    Json?
+  fromAddress  String?
+  toAddress    String?
+  settlementId String?
+  paymentReference String?
+  executionAttempts Json?
+  fallbackPath Json?
+  lastSuccessfulRail String?
+  errorMessage String?  @db.Text
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  events       TransactionEvent[]
+
+  @@index([userId, createdAt])
+  @@index([status, updatedAt])
+  @@index([type, status])
+  @@index([txHash])
+  @@index([chainStatus])
+  @@index([chainId, chainStatus])
+  @@index([finalityStatus])
+  @@index([settlementId])
+  @@index([lastSuccessfulRail])
+}
+
+model TransactionEvent {
+  id            String   @id @default(cuid())
+  transactionId String
+  eventType     String
+  payload       Json?
+  createdAt     DateTime @default(now())
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@index([transactionId, createdAt])
+  @@index([eventType, createdAt])
+}

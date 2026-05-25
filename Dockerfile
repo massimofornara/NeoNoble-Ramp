@@ -1,47 +1,23 @@
-FROM node:20-alpine AS base
-WORKDIR /app
-
-FROM base AS deps
-COPY package.json package-lock.json* ./
-COPY prisma ./prisma/
-RUN npm install --no-audit --no-fund --strict-ssl=false
-RUN NODE_TLS_REJECT_UNAUTHORIZED=0 npx prisma generate || true
-
+# ===== BASE =====
 FROM node:20 AS base
+WORKDIR /app
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 
-FROM base AS worker
-CMD ["node", "worker.js"]
+COPY package*.json ./
+RUN npm install
 
-FROM base AS reconciler
-CMD ["node", "reconciler.js"]
-
-FROM base AS api
-CMD ["node", "server.js"]
-
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run typecheck
-RUN npm run build
+RUN npx prisma generate
 
-FROM base AS runner
-ENV NODE_ENV=production
-ENV PORT=3000
-
-RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/db ./db
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/workers ./workers
-COPY --from=builder /app/gateways ./gateways
-
-USER nextjs
+# ===== API =====
+FROM base AS production
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start"]
 
+# ===== WORKER =====
+FROM base AS worker
+CMD ["node", "workers/worker.js"]
+
+# ===== RECONCILER =====
+FROM base AS reconciler
+CMD ["node", "workers/reconciler.js"]

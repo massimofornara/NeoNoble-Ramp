@@ -1,0 +1,126 @@
+Transform tier1-exchange-backend from deterministic mock settlement infrastructure into a REAL production-grade exchange execution environment with live blockchain settlement, Kubernetes deployment, persistent database infrastructure, treasury signing, monitoring, reconciliation and real txHash verification.
+
+MANDATORY IMPLEMENTATION REQUIREMENTS:
+
+1. ENABLE REAL ON-CHAIN SETTLEMENT
+- Replace mock settlement execution with real blockchain broadcasting.
+- Activate BSC/Ethereum adapters already implemented.
+- Add:
+  BSC_RPC_URL
+  ETHEREUM_RPC_URL
+  BLOCKCHAIN_EXECUTION_MODE=real
+  SETTLEMENT_ADAPTER=bsc
+- Implement:
+  - tx broadcast
+  - receipt verification
+  - confirmation depth validation
+  - retry-safe nonce management
+  - gas estimation strategy
+  - mempool-safe transaction pipeline
+
+2. CONNECT REAL TREASURY WALLET
+- Implement secure signer backend.
+- Add:
+  TREASURY_PRIVATE_KEY
+  TREASURY_ADDRESS
+- Support:
+  - isolated signing
+  - treasury separation
+  - settlement signer abstraction
+  - hot wallet execution domain
+
+3. DEPLOY REAL KUBERNETES INFRASTRUCTURE
+Deploy:
+- API gateway
+- settlement workers
+- reconciliation workers
+- event bus replicas
+- risk engine workers
+- ledger service
+- monitoring stack
+
+Implement:
+- Helm charts
+- StatefulSets
+- HPA autoscaling
+- rolling deployments
+- liveness/readiness probes
+- persistent volumes
+- secrets/configmaps
+
+4. REPLACE FILE LOG PRIMARY STORAGE
+Migrate persistence layer to PostgreSQL with:
+- append-only event tables
+- WAL replication
+- transactional consistency
+- snapshot support
+- replay bootstrap
+- integrity verification
+
+5. ENABLE REAL PRICE DISCOVERY
+Replace static valuation with:
+- CoinGecko integration
+- DEX Screener integration
+- oracle cache layer
+- deterministic replay-safe pricing snapshots
+- market routing abstraction
+
+6. ENABLE FULL OBSERVABILITY
+Integrate:
+- Prometheus
+- Grafana
+- OpenTelemetry
+- structured JSON logs
+- distributed trace IDs
+- alerting system
+- DLQ monitoring
+- settlement failure alarms
+- reconciliation failure alarms
+
+7. ENVIRONMENT ISOLATION
+Create:
+- dev
+- staging
+- production
+
+Each environment must have:
+- separate DB
+- separate treasury
+- separate secrets
+- separate chain config
+- separate settlement config
+
+8. FINAL REAL PRODUCTION MILESTONE
+Execute ONE FULL REAL END-TO-END SETTLEMENT FLOW:
+
+100 NENO -> WBNB
+
+using:
+1 NENO = 10000 USDT
+
+Required lifecycle:
+swap
+? tx broadcast
+? real txHash
+? tx receipt
+? settlement confirmation
+? reconciliation
+? append-only ledger commit
+? settlement_confirmed
+
+FINAL VALIDATION REQUIREMENTS:
+- real txHash
+- replay validation=true
+- settlementProofValid=true
+- ledgerIntegrity=true
+- state=LEDGER_RECONCILED
+- no mock settlement adapters allowed in production flow
+
+Do NOT break:
+- event sourcing semantics
+- append-only guarantees
+- reconciliation engine
+- replay determinism
+- idempotency guarantees
+
+The result must resemble a true institutional-grade exchange settlement infrastructure.

@@ -11,7 +11,41 @@ function getStripe() {
     throw new Error('Stripe secret key not configured');
   }
   return new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-12-18.acacia',
+    apiVersion: '2026-04-22.dahlia',
+  });
+}
+
+async function syncLedgerTransactionFromStripe(object, status, eventType) {
+  const transactionId = object.metadata?.transactionId;
+  if (!transactionId) return;
+
+  const existing = await prisma.transaction.findUnique({ where: { id: transactionId } });
+  if (!existing) return;
+
+  const settlementId = object.id;
+  const failed = status === 'execution_fallback_active';
+  await prisma.transaction.update({
+    where: { id: transactionId },
+    data: {
+      status,
+      step: status === 'settlement_confirmed' ? 'finalized' : failed ? 'provider_failed_retrying' : 'provider_settlement_pending',
+      settlementLayer: 'stripe',
+      settlementId,
+      paymentReference: settlementId,
+      finalityStatus: status === 'settlement_confirmed' ? 'finalized' : 'settlement_pending',
+      chainStatus: status === 'settlement_confirmed' ? 'provider_settlement_confirmed' : 'provider_routing_active',
+      lastSuccessfulRail: status === 'settlement_confirmed' ? 'stripe' : undefined,
+      rawTxData: object,
+      errorMessage: failed ? object.last_payment_error?.message || object.failure_message || 'Stripe provider failed' : null,
+    },
+  });
+
+  await prisma.transactionEvent.create({
+    data: {
+      transactionId,
+      eventType,
+      payload: object,
+    },
   });
 }
 
@@ -68,10 +102,21 @@ export async function POST(request) {
 
         case 'payment_intent.succeeded':
           await handlePaymentIntentSucceeded(event.data.object);
+          await syncLedgerTransactionFromStripe(event.data.object, 'settlement_confirmed', 'provider.stripe.settlement_confirmed');
           break;
 
         case 'payment_intent.payment_failed':
           await handlePaymentIntentFailed(event.data.object);
+          await syncLedgerTransactionFromStripe(event.data.object, 'execution_fallback_active', 'provider.stripe.failed');
+          break;
+
+        case 'payout.paid':
+          await syncLedgerTransactionFromStripe(event.data.object, 'settlement_confirmed', 'provider.stripe.settlement_confirmed');
+          break;
+
+        case 'payout.failed':
+        case 'payout.canceled':
+          await syncLedgerTransactionFromStripe(event.data.object, 'execution_fallback_active', 'provider.stripe.failed');
           break;
 
         default:

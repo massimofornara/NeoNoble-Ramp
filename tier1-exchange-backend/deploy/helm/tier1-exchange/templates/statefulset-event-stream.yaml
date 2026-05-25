@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-event-stream
+spec:
+  serviceName: {{ .Release.Name }}-event-stream
+  replicas: {{ .Values.eventStream.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-event-stream
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-event-stream
+    spec:
+      containers:
+        - name: event-stream-node
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+            - secretRef:
+                name: {{ .Release.Name }}-secrets
+          ports:
+            - containerPort: {{ .Values.api.port }}
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          volumeMounts:
+            - name: event-data
+              mountPath: /var/lib/tier1-exchange
+  volumeClaimTemplates:
+    - metadata:
+        name: event-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.eventStream.storage }}
