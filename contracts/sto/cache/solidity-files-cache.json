@@ -1,0 +1,429 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/compliance/DefaultCompliance.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "6cad9a24f6ada497d147b60c8dfeefdb",
+      "sourceName": "contracts/compliance/DefaultCompliance.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/ICompliance.sol",
+        "../interfaces/IIdentityRegistry.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "DefaultCompliance"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/interfaces/ICompliance.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "00b9f65a69139d1b66fae352bdd9936f",
+      "sourceName": "contracts/interfaces/ICompliance.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ICompliance"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/interfaces/IIdentityRegistry.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "803327b26246d83ece384f78660563b7",
+      "sourceName": "contracts/interfaces/IIdentityRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IIdentityRegistry"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/token/NenoSecurityToken.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "3347c1d29bd9e2c4f9409fcb4e13b983",
+      "sourceName": "contracts/token/NenoSecurityToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IIdentityRegistry.sol",
+        "../interfaces/ICompliance.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "NenoSecurityToken"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/registry/IdentityRegistry.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "72558407f4707f275e9bde8aa063c4af",
+      "sourceName": "contracts/registry/IdentityRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IIdentityRegistry.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IdentityRegistry"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/interfaces/INAVOracle.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "23f52594c39cf4d749f5d28a880b3126",
+      "sourceName": "contracts/interfaces/INAVOracle.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "INAVOracle"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/vault/RedemptionVault.sol": {
+      "lastModificationDate": 1776799274426,
+      "contentHash": "ece45d37de14b8acdae988aca02cd76f",
+      "sourceName": "contracts/vault/RedemptionVault.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IRedemptionVault.sol",
+        "../interfaces/INAVOracle.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20Minimal",
+        "ISecurityToken",
+        "RedemptionVault"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/interfaces/IRedemptionVault.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "adcec7ec1296da135818d1a1a481ff17",
+      "sourceName": "contracts/interfaces/IRedemptionVault.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRedemptionVault"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/oracle/NAVOracle.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "19b9254eb11650f44323d24498945ab2",
+      "sourceName": "contracts/oracle/NAVOracle.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/INAVOracle.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "NAVOracle"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/test/MockERC20.sol": {
+      "lastModificationDate": 1776799274422,
+      "contentHash": "783a298f0d431176ba4f0ec99d684b2e",
+      "sourceName": "contracts/test/MockERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MockERC20"
+      ]
+    },
+    "/home/massimo/NeoNoble-Ramp/contracts/sto/contracts/vault/RevenueShareVault.sol": {
+      "lastModificationDate": 1776799274426,
+      "contentHash": "929cc1c6b4f6046e616d81fb8fd3c76f",
+      "sourceName": "contracts/vault/RevenueShareVault.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20Revenue",
+        "IStoTokenSnapshot",
+        "RevenueShareVault"
+      ]
+    }
+  }
+}

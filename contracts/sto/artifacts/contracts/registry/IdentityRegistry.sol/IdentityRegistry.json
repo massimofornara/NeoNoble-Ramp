@@ -1,0 +1,313 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IdentityRegistry",
+  "sourceName": "contracts/registry/IdentityRegistry.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "agent",
+          "type": "address"
+        }
+      ],
+      "name": "AgentAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "agent",
+          "type": "address"
+        }
+      ],
+      "name": "AgentRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint16",
+          "name": "country",
+          "type": "uint16"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint40",
+          "name": "expiresAt",
+          "type": "uint40"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "kycProvider",
+          "type": "bytes32"
+        }
+      ],
+      "name": "IdentityRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        }
+      ],
+      "name": "IdentityRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint16",
+          "name": "country",
+          "type": "uint16"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint40",
+          "name": "expiresAt",
+          "type": "uint40"
+        }
+      ],
+      "name": "IdentityUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "agent",
+          "type": "address"
+        }
+      ],
+      "name": "addAgent",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "agents",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        }
+      ],
+      "name": "identityOf",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "verified",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint16",
+              "name": "country",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint40",
+              "name": "verifiedAt",
+              "type": "uint40"
+            },
+            {
+              "internalType": "uint40",
+              "name": "expiresAt",
+              "type": "uint40"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "kycProvider",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct IIdentityRegistry.Identity",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "agent",
+          "type": "address"
+        }
+      ],
+      "name": "isAgent",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        }
+      ],
+      "name": "isVerified",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        },
+        {
+          "internalType": "uint16",
+          "name": "country",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint40",
+          "name": "expiresAt",
+          "type": "uint40"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "kycProvider",
+          "type": "bytes32"
+        }
+      ],
+      "name": "registerIdentity",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "agent",
+          "type": "address"
+        }
+      ],
+      "name": "removeAgent",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "investor",
+          "type": "address"
+        }
+      ],
+      "name": "removeIdentity",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "setOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080346100a957601f6107d338819003918201601f19168301916001600160401b038311848410176100ae578084926020946040528339810103126100a957516001600160a01b038116908190036100a957801561007a57600080546001600160a01b03191691909117905560405161070e90816100c58239f35b60405162461bcd60e51b815260206004820152600760248201526606f776e65723d360cc1b6044820152606490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe604060808152600436101561001357600080fd5b600090813560e01c806313af4035146105185780631ffbb064146104ee57806384e79842146104725780638da5cb5b1461044b57806397a6278e146103dd578063b9209e33146103af578063c1f2f1aa14610320578063c634562614610260578063eda50db9146100cd5763fd66091e1461008d57600080fd5b346100c95760203660031901126100c95760209160ff9082906001600160a01b036100b661056b565b1681526001855220541690519015158152f35b5080fd5b50346100c95760803660031901126100c9576100e761056b565b6024359061ffff821680920361025c576044359264ffffffffff938481168091036102585760643592338752600160205260ff83882054168015610245575b61012f906105f0565b6001600160a01b0316946101448615156105be565b42168082111561020f5791606093917f0e8932203a72e5b1fcd29c9d671ae2c16f917306f1c2a4ca194e2c118ec12c709593600188610181610628565b928284528b6020850191898352878601908152878b87019288845260808801958b87528152600260205220955115159260ff6cffffffffff000000000000000067ffffffffff00000062ffff008a54945160081b16945160181b1694518b1b169416906cffffffffffffffffffffffffff19161717171783555191015581519384526020840152820152a280f35b825162461bcd60e51b815260206004820152600f60248201526e185b1c9958591e48195e1c1a5c9959608a1b6044820152606490fd5b5086546001600160a01b03163314610126565b8580fd5b8380fd5b50346100c95760203660031901126100c9578060a09261027e61056b565b816080610289610628565b82815282602082015282868201528260608201520152600180861b031681526002602052209060016102b9610628565b9183549060ff82161515948585526020850161ffff808560081c16825283870191608064ffffffffff978895868960181c1686528660608c0199891c1689520154980197885284519889525116602088015251169085015251166060830152516080820152f35b50346100c95760203660031901126100c95781600161033d61056b565b3383528160205260ff84842054168015610399575b61035b906105f0565b818060a01b0316928383526002602052822082815501557f374ace31388bb8ee152e1f7ad5e216944c28a32dfedb6c9353ba26bf0cdbb15a8280a280f35b5061035b828060a01b0384541633149050610352565b50346100c95760203660031901126100c9576020906103d46103cf61056b565b61065e565b90519015158152f35b50346100c95760203660031901126100c9576103f761056b565b82546001600160a01b0391906104109083163314610586565b168083526001602052908220805460ff191690557fed9c8ad8d5a0a66898ea49d2956929c93ae2e8bd50281b2ed897c5d1a6737e0b8280a280f35b50346100c957816003193601126100c957905490516001600160a01b039091168152602090f35b50346100c95760203660031901126100c95761048c61056b565b82546001600160a01b0391906104a59083163314610586565b16906104b28215156105be565b81835260016020528220600160ff198254161790557ff68e73cec97f2d70aa641fb26e87a4383686e2efacb648f2165aeb02ac562ec58280a280f35b50346100c95760203660031901126100c95760209160ff9082906001600160a01b036100b661056b565b82346105685760203660031901126105685761053261056b565b8154906001600160a01b039061054b3383851614610586565b16906105588215156105be565b6001600160a01b03191617815580f35b80fd5b600435906001600160a01b038216820361058157565b600080fd5b1561058d57565b60405162461bcd60e51b81526020600482015260096024820152683737ba1037bbb732b960b91b6044820152606490fd5b156105c557565b606460405162461bcd60e51b81526020600482015260046024820152637a65726f60e01b6044820152fd5b156105f757565b60405162461bcd60e51b81526020600482015260096024820152681b9bdd081859d95b9d60ba1b6044820152606490fd5b6040519060a0820182811067ffffffffffffffff82111761064857604052565b634e487b7160e01b600052604160045260246000fd5b6001600160a01b0316600090815260026020526040902061067d610628565b8154906080600160ff841615938415845261ffff8160081c16602085015264ffffffffff90818160181c16604086015260401c169485606085015201549101526106d2574210156106cd57600190565b600090565b5060009056fea2646970667358221220dd20530af448cfcdafee54a142dc4cc3b0021b08e6ca653a9f82d72c64802fb764736f6c63430008140033",
+  "deployedBytecode": "0x604060808152600436101561001357600080fd5b600090813560e01c806313af4035146105185780631ffbb064146104ee57806384e79842146104725780638da5cb5b1461044b57806397a6278e146103dd578063b9209e33146103af578063c1f2f1aa14610320578063c634562614610260578063eda50db9146100cd5763fd66091e1461008d57600080fd5b346100c95760203660031901126100c95760209160ff9082906001600160a01b036100b661056b565b1681526001855220541690519015158152f35b5080fd5b50346100c95760803660031901126100c9576100e761056b565b6024359061ffff821680920361025c576044359264ffffffffff938481168091036102585760643592338752600160205260ff83882054168015610245575b61012f906105f0565b6001600160a01b0316946101448615156105be565b42168082111561020f5791606093917f0e8932203a72e5b1fcd29c9d671ae2c16f917306f1c2a4ca194e2c118ec12c709593600188610181610628565b928284528b6020850191898352878601908152878b87019288845260808801958b87528152600260205220955115159260ff6cffffffffff000000000000000067ffffffffff00000062ffff008a54945160081b16945160181b1694518b1b169416906cffffffffffffffffffffffffff19161717171783555191015581519384526020840152820152a280f35b825162461bcd60e51b815260206004820152600f60248201526e185b1c9958591e48195e1c1a5c9959608a1b6044820152606490fd5b5086546001600160a01b03163314610126565b8580fd5b8380fd5b50346100c95760203660031901126100c9578060a09261027e61056b565b816080610289610628565b82815282602082015282868201528260608201520152600180861b031681526002602052209060016102b9610628565b9183549060ff82161515948585526020850161ffff808560081c16825283870191608064ffffffffff978895868960181c1686528660608c0199891c1689520154980197885284519889525116602088015251169085015251166060830152516080820152f35b50346100c95760203660031901126100c95781600161033d61056b565b3383528160205260ff84842054168015610399575b61035b906105f0565b818060a01b0316928383526002602052822082815501557f374ace31388bb8ee152e1f7ad5e216944c28a32dfedb6c9353ba26bf0cdbb15a8280a280f35b5061035b828060a01b0384541633149050610352565b50346100c95760203660031901126100c9576020906103d46103cf61056b565b61065e565b90519015158152f35b50346100c95760203660031901126100c9576103f761056b565b82546001600160a01b0391906104109083163314610586565b168083526001602052908220805460ff191690557fed9c8ad8d5a0a66898ea49d2956929c93ae2e8bd50281b2ed897c5d1a6737e0b8280a280f35b50346100c957816003193601126100c957905490516001600160a01b039091168152602090f35b50346100c95760203660031901126100c95761048c61056b565b82546001600160a01b0391906104a59083163314610586565b16906104b28215156105be565b81835260016020528220600160ff198254161790557ff68e73cec97f2d70aa641fb26e87a4383686e2efacb648f2165aeb02ac562ec58280a280f35b50346100c95760203660031901126100c95760209160ff9082906001600160a01b036100b661056b565b82346105685760203660031901126105685761053261056b565b8154906001600160a01b039061054b3383851614610586565b16906105588215156105be565b6001600160a01b03191617815580f35b80fd5b600435906001600160a01b038216820361058157565b600080fd5b1561058d57565b60405162461bcd60e51b81526020600482015260096024820152683737ba1037bbb732b960b91b6044820152606490fd5b156105c557565b606460405162461bcd60e51b81526020600482015260046024820152637a65726f60e01b6044820152fd5b156105f757565b60405162461bcd60e51b81526020600482015260096024820152681b9bdd081859d95b9d60ba1b6044820152606490fd5b6040519060a0820182811067ffffffffffffffff82111761064857604052565b634e487b7160e01b600052604160045260246000fd5b6001600160a01b0316600090815260026020526040902061067d610628565b8154906080600160ff841615938415845261ffff8160081c16602085015264ffffffffff90818160181c16604086015260401c169485606085015201549101526106d2574210156106cd57600190565b600090565b5060009056fea2646970667358221220dd20530af448cfcdafee54a142dc4cc3b0021b08e6ca653a9f82d72c64802fb764736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

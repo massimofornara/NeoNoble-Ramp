@@ -129,3 +129,5 @@ build
 
 MetaSwapV3/DockerDesktopInstaller.exe
 *.exe
+contracts/sto/artifacts/
+contracts/sto/cache/
