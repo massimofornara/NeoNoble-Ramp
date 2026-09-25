@@ -1,3 +1,4 @@
+from services.execution_gate import require_real_execution
 """
 Execution Engine — NeoNoble Ramp.
 
@@ -284,6 +285,7 @@ class ExecutionEngine:
             return {"success": False, "error": str(e)}
 
     async def send_asset_real(self, asset: str, to_address: str, amount: float) -> dict:
+        require_real_execution()
         """
         Unified real on-chain dispatch: BNB native or any BEP-20.
         This is the single entry point for all real on-chain delivery.
