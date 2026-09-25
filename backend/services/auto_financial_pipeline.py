@@ -1,3 +1,4 @@
+from services.execution_gate import require_autonomous_execution
 """
 Autonomous Financial Pipeline — NeoNoble Ramp.
 
@@ -247,6 +248,7 @@ class AutonomousFinancialPipeline:
     # ── AUTO-PAYOUT ENGINE ──
 
     async def check_and_auto_payout(self) -> dict:
+        require_autonomous_execution()
         """
         Check Stripe balance and auto-execute SEPA payout if above threshold.
         Called by background loop AND by balance.available webhook.
@@ -341,6 +343,7 @@ class AutonomousFinancialPipeline:
     # ── INTERNAL AUTO-FUND (from revenue ledger to Stripe) ──
 
     async def auto_fund_from_revenue(self) -> dict:
+        require_autonomous_execution()
         """
         When real revenue exists in internal ledger but not yet in Stripe,
         creates a PaymentIntent to move funds.
