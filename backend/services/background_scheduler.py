@@ -1,3 +1,4 @@
+from services.execution_gate import autonomous_execution_enabled
 """
 Background Task Scheduler.
 
@@ -74,6 +75,9 @@ async def _check_price_alerts():
 
 async def _execute_dca_bot():
     """Execute all due DCA plans."""
+    if not autonomous_execution_enabled():
+        logger.info("[SECURITY] DCA execution LOCKED")
+        return 0
     try:
         from routes.dca_routes import execute_dca_plans
         executed = await execute_dca_plans()
@@ -113,6 +117,9 @@ async def _run_periodic(name: str, func, interval_seconds: int):
 
 async def _process_payouts():
     """Process the payout queue."""
+    if not autonomous_execution_enabled():
+        logger.info("[SECURITY] Payout queue execution LOCKED")
+        return 0
     try:
         from services.settlement_ledger import process_payout_queue
         await process_payout_queue()
