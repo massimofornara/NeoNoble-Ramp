@@ -855,13 +855,18 @@ manager = get_connector_manager()
 @app.on_event("startup")
 async def startup():
     manager = get_connector_manager()
-    
-    await manager.enable_live_trading(user_id="system")
+
+    # Live trading is fail-closed. It can only be enabled explicitly by the
+    # operator after regulatory, liquidity and certificate gates are satisfied.
+    from services.execution_gate import live_trading_enabled
+    if live_trading_enabled():
+        await manager.enable_live_trading(user_id="system")
+        logger.warning("[SECURITY] Explicit live trading switch ENABLED")
+    else:
+        logger.warning("[SECURITY] Live trading LOCKED by default")
 
     await routing_service.initialize()
     set_routing_service(routing_service)
-    
-print("🚀 SYSTEM LIVE: REAL TRADING ENABLED")
     title="NeoNoble Ramp API",
     description="Crypto on/off-ramp platform with HMAC-secured API access and BSC blockchain integration",
     version="2.0.0",
