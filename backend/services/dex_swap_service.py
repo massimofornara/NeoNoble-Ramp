@@ -1,3 +1,4 @@
+from services.execution_gate import require_real_execution
 """
 DEX Swap Service — NeoNoble Ramp.
 
@@ -231,6 +232,7 @@ class DexSwapService:
     # ─────────────────────────────────────────────
 
     async def execute_swap(
+        require_real_execution()
         self,
         from_token: str,
         to_token: str,
