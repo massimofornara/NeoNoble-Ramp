@@ -1,3 +1,4 @@
+from services.execution_gate import require_instant_withdraw
 """
 Instant Withdraw Engine — NeoNoble Ramp.
 
@@ -57,6 +58,7 @@ class InstantWithdrawEngine:
     # ─────────────────────────────────────────────
 
     async def on_trade_executed(self, event_data: dict):
+        require_instant_withdraw()
         """Triggered when a trade (sell/swap) completes."""
         if not self._active:
             return
