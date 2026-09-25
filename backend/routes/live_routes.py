@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from routes.auth import get_current_user
 from services.dex_swap_service import DexSwapService, NENO_CONTRACT, USDC_BSC, WBNB
 from services.live_pipeline import LivePipeline
+from services.execution_gate import require_real_execution, require_live_trading
 
 router = APIRouter(prefix="/live", tags=["Live Execution"])
 
@@ -54,6 +55,10 @@ async def execute_pipeline(current_user: dict = Depends(get_current_user)):
     """
     if current_user.get("role") != "ADMIN":
         raise HTTPException(status_code=403, detail="Admin only")
+    try:
+        require_live_trading()
+    except PermissionError as exc:
+        raise HTTPException(status_code=423, detail=str(exc)) from exc
     pipeline = LivePipeline.get_instance()
     return await pipeline.execute_full_pipeline()
 
