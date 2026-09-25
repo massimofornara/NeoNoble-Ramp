@@ -125,6 +125,7 @@ from database.dual_manager import get_dual_db_manager
 from database.config import get_pg_session_factory, init_pg_engine
 
 # Import routes
+from routes.tpp_production import router as tpp_production_router
 from routes.auth import router as auth_router, set_auth_service
 from routes.dev_portal import router as dev_router, set_api_key_service
 from routes.ramp_api import (
@@ -903,6 +904,7 @@ async def health():
     return {"status": "healthy", "service": "NeoNoble Ramp"}
 
 # Include all routers
+api_router.include_router(tpp_production_router)
 api_router.include_router(auth_router)
 api_router.include_router(dev_router)
 api_router.include_router(ramp_api_router)
