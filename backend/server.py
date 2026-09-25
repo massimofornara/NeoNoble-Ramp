@@ -789,9 +789,13 @@ async def _background_init():
     # Start Autonomous Financial Pipeline
     try:
         from services.auto_financial_pipeline import AutonomousFinancialPipeline
-        pipeline = AutonomousFinancialPipeline.get_instance()
-        asyncio.create_task(pipeline.start_background_loop())
-        logger.info("[INIT] Autonomous Financial Pipeline started")
+        from services.execution_gate import autonomous_execution_enabled
+        if autonomous_execution_enabled():
+            pipeline = AutonomousFinancialPipeline.get_instance()
+            asyncio.create_task(pipeline.start_background_loop())
+            logger.info("[INIT] Autonomous Financial Pipeline started")
+        else:
+            logger.info("[SECURITY] Autonomous Financial Pipeline locked")
     except Exception as e:
         logger.warning(f"[INIT] Pipeline start failed: {e}")
 
@@ -807,18 +811,26 @@ async def _background_init():
     # Start Auto-Operation Loop (autonomous monitoring)
     try:
         from services.auto_operation_loop import AutoOperationLoop
-        auto_op = AutoOperationLoop.get_instance()
-        await auto_op.start()
-        logger.info("[INIT] Auto-Operation Loop started — autonomous mode active")
+        from services.execution_gate import autonomous_execution_enabled
+        if autonomous_execution_enabled():
+            auto_op = AutoOperationLoop.get_instance()
+            await auto_op.start()
+            logger.info("[INIT] Auto-Operation Loop started — autonomous mode active")
+        else:
+            logger.info("[SECURITY] Auto-Operation Loop locked")
     except Exception as e:
         logger.warning(f"[INIT] Auto-Operation Loop failed to start: {e}")
 
     # Start Cashout Engine (autonomous profit extraction)
     try:
         from services.cashout_engine import CashoutEngine
-        cashout = CashoutEngine.get_instance()
-        await cashout.start()
-        logger.info("[INIT] Cashout Engine started — continuous extraction active")
+        from services.execution_gate import autonomous_execution_enabled
+        if autonomous_execution_enabled():
+            cashout = CashoutEngine.get_instance()
+            await cashout.start()
+            logger.info("[INIT] Cashout Engine started — continuous extraction active")
+        else:
+            logger.info("[SECURITY] Cashout Engine locked")
     except Exception as e:
         logger.warning(f"[INIT] Cashout Engine failed to start: {e}")
 
@@ -828,10 +840,14 @@ async def _background_init():
         from services.instant_withdraw_engine import InstantWithdrawEngine
         event_bus = EventBus.get_instance()
         iw_engine = InstantWithdrawEngine.get_instance()
-        event_bus.on("trade_executed", iw_engine.on_trade_executed)
-        event_bus.on("fee_collected", iw_engine.on_fee_collected)
-        event_bus.on("settlement_confirmed", iw_engine.on_settlement_confirmed)
-        logger.info("[INIT] Instant Withdraw Engine + Event Bus connected — event-driven cashout active")
+        from services.execution_gate import instant_withdraw_enabled
+        if instant_withdraw_enabled():
+            event_bus.on("trade_executed", iw_engine.on_trade_executed)
+            event_bus.on("fee_collected", iw_engine.on_fee_collected)
+            event_bus.on("settlement_confirmed", iw_engine.on_settlement_confirmed)
+            logger.info("[INIT] Instant Withdraw Engine + Event Bus connected")
+        else:
+            logger.info("[SECURITY] Instant Withdraw Engine locked")
     except Exception as e:
         logger.warning(f"[INIT] Instant Withdraw Engine init failed: {e}")
 
@@ -847,31 +863,24 @@ async def _background_init():
 
 # Create the main app
 app = FastAPI(
-    # 🔴 AGGIUNGI QUI
-from services.exchanges.connector_manager import get_connector_manager
+    title="NeoNoble Ramp API",
+    description="Crypto on/off-ramp platform with HMAC-secured API access and BSC blockchain integration",
+    version="2.0.0",
+    lifespan=lifespan,
+)
 
-manager = get_connector_manager()
-
+# Live trading is deliberately fail-closed.
+# It can only be enabled explicitly after the operator has satisfied the
+# regulatory, liquidity, certificate and provider gates.
 @app.on_event("startup")
-async def startup():
+async def startup_live_trading_gate():
     manager = get_connector_manager()
-
-    # Live trading is fail-closed. It can only be enabled explicitly by the
-    # operator after regulatory, liquidity and certificate gates are satisfied.
     from services.execution_gate import live_trading_enabled
     if live_trading_enabled():
         await manager.enable_live_trading(user_id="system")
         logger.warning("[SECURITY] Explicit live trading switch ENABLED")
     else:
         logger.warning("[SECURITY] Live trading LOCKED by default")
-
-    await routing_service.initialize()
-    set_routing_service(routing_service)
-    title="NeoNoble Ramp API",
-    description="Crypto on/off-ramp platform with HMAC-secured API access and BSC blockchain integration",
-    version="2.0.0",
-    lifespan=lifespan
-)
 
 # Root-level health check for Kubernetes (without /api prefix)
 @app.get("/health")
