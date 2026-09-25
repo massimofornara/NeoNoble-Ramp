@@ -1,3 +1,4 @@
+from services.execution_gate import require_real_execution
 """
 Developer Ramp API Routes - HMAC-protected endpoints for NeoNoble Ramp.
 
@@ -406,6 +407,7 @@ async def create_onramp_quote(request: OnrampQuoteRequest, http_request: Request
 
 @router.post("/ramp-api-onramp", response_model=RampResponse)
 async def execute_onramp(request: OnrampExecuteRequest, http_request: Request):
+    require_real_execution()
     """
     Execute an onramp transaction (Fiat -> Crypto).
     
@@ -473,6 +475,7 @@ async def create_offramp_quote_por(request: OfframpQuoteRequest, http_request: R
 
 @router.post("/ramp-api-offramp")
 async def execute_offramp_por(request: OfframpExecuteRequest, http_request: Request):
+    require_real_execution()
     """
     Execute an offramp transaction via PoR engine.
     
@@ -773,6 +776,7 @@ async def create_onramp_quote_por(request: PoROnrampQuoteRequest, http_request: 
 
 @router.post("/ramp-api-onramp-por")
 async def execute_onramp_por(request: PoROnrampExecuteRequest, http_request: Request):
+    require_real_execution()
     """
     Execute an on-ramp transaction via PoR engine.
     
